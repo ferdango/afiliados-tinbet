@@ -12,6 +12,21 @@ python3 -m http.server 5500
 
 y entra a <http://localhost:5500>.
 
+## Versiones
+
+- Tag [`figma-fiel`](../../tree/figma-fiel): maquetación tal cual el diseño de Figma.
+- `master`: versión mejorada (contenido, UX, accesibilidad, rendimiento y SEO). El detalle está en [MEJORAS.md](MEJORAS.md).
+
+## Configuración
+
+Al inicio de `js/main.js` está el objeto `CONFIG`, que hay que completar antes de publicar:
+
+| Clave | Uso |
+|---|---|
+| `loginUrl` | URL del login de afiliados (botones "Inicia sesión") |
+| `formEndpoint` | Endpoint que recibe el formulario por `POST` en JSON. Si está vacío, el envío se simula |
+| `testimonialVideo` | URL del video testimonial (embed de YouTube o `.mp4`) |
+
 ## Estructura
 
 ```
@@ -19,7 +34,7 @@ index.html          Marcado de todas las secciones
 css/styles.css      Estilos (desktop 1512 px, ajustes 1024–1511 px y layout móvil < 1024 px)
 js/main.js          Menú móvil, tabs del panel, productos, etapas de comisión + gauge,
                     acordeones (pasos, FAQ, footer), validación del formulario y escalado
-assets/img          Imágenes exportadas de Figma (originales con transparencia)
+assets/img          Imágenes exportadas de Figma (PNG/JPG + versiones AVIF optimizadas)
 assets/icons        Iconos SVG exportados de Figma
 ```
 
