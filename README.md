@@ -51,7 +51,9 @@ assets/icons        Iconos SVG exportados de Figma
   - `data-count`: el número cuenta desde 0. Acepta prefijos y sufijos, como `S/ 15,000` o `300+`.
   - `data-parallax="0.05"`: desplazamiento suave con el scroll, solo en desktop.
   - `data-inview`: agrega la clase `.is-inview` para animaciones propias.
-- Los sliders avanzan solos solo mientras están en pantalla, se pausan con el mouse o el foco encima y se detienen del todo cuando el usuario elige algo.
+- **Sliders:** avanzan solos en bucle infinito mientras están en pantalla. Del último pasan al primero sin rebobinar, gracias a copias de las primeras tarjetas.
+  - Se pausan con el mouse o el foco de teclado encima.
+  - Cuando el usuario elige algo, respetan su elección 6 s (`HOLD_MS` en `js/main.js`) y retoman el bucle.
 - Con *Reducir movimiento* activado en el sistema operativo se muestra todo sin animar. Si `motion.js` no carga, a los 3 s todo el contenido queda visible igual.
 
 ## Notas sobre la fidelidad al diseño

@@ -59,11 +59,13 @@
   }
 
   /* ---------------------------------------------------------
-     Avance automático de los sliders
-     Corre solo si el bloque está en pantalla, la pestaña está visible y el
-     usuario no tiene el mouse o el foco encima. Se detiene del todo en
-     cuanto el usuario elige algo por su cuenta.
+     Avance automático de los sliders, en bucle infinito
+     Corre mientras el bloque está en pantalla y la pestaña del navegador
+     está visible. Se pausa con el mouse o el foco de teclado sobre el
+     control y, cuando el usuario elige algo, respeta su elección unos
+     segundos y luego retoma el bucle.
      --------------------------------------------------------- */
+  var HOLD_MS = 6000;
   var autoplays = [];
   var looping = false;
   var lastTs = null;
@@ -76,30 +78,36 @@
       inView: false,
       hover: false,
       focus: false,
-      stopped: reduceMotion || !opts.root,
+      heldUntil: 0,
+      disabled: reduceMotion || !opts.root,
       running: function () {
-        return !a.stopped && a.inView && !a.hover && !a.focus && !document.hidden && (!opts.when || opts.when());
+        return !a.disabled && a.inView && !a.hover && !a.focus && !document.hidden &&
+          performance.now() >= a.heldUntil && (!opts.when || opts.when());
       },
       progress: function (p) { if (opts.onProgress) opts.onProgress(p); },
       reset: function () {
         a.t = 0;
-        if (!a.stopped) a.progress(0);
+        if (!a.disabled) a.progress(0);
         wake();
       },
-      stop: function () {
-        if (a.stopped) return;
-        a.stopped = true;
-        if (opts.onStop) opts.onStop();
+      hold: function () {
+        if (a.disabled) return;
+        a.heldUntil = performance.now() + HOLD_MS;
+        a.reset();
+        setTimeout(wake, HOLD_MS + 50);
       },
       next: opts.next
     };
-    if (a.stopped) return a;
+    if (a.disabled) return a;
     // la pausa por hover es sobre el control en sí, no sobre toda la sección
     (opts.hoverEls || [a.root]).forEach(function (el) {
       el.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') a.hover = true; });
       el.addEventListener('pointerleave', function () { a.hover = false; wake(); });
     });
-    a.root.addEventListener('focusin', function () { a.focus = true; });
+    // solo el foco de teclado pausa (un clic deja el foco en el botón y no debe frenar el bucle)
+    a.root.addEventListener('focusin', function (e) {
+      if (e.target.matches && e.target.matches(':focus-visible')) a.focus = true;
+    });
     a.root.addEventListener('focusout', function (e) {
       if (!a.root.contains(e.relatedTarget)) { a.focus = false; wake(); }
     });
@@ -144,44 +152,114 @@
   document.addEventListener('visibilitychange', wake);
 
   /* ---------------------------------------------------------
-     Puntos de carrusel (mobile)
+     Carruseles con scroll horizontal: bucle infinito y puntos
+     Al final se agregan copias de las dos primeras tarjetas. Cuando el
+     carrusel se detiene sobre una copia salta, sin animación, a la
+     original: así del último se pasa al primero sin "rebobinar".
      --------------------------------------------------------- */
-  function makeDots(scroller, items, label, after) {
-    var wrap = document.createElement('div');
-    wrap.className = 'dots';
-    items.forEach(function (item, i) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.setAttribute('aria-label', label + ' ' + (i + 1) + ' de ' + items.length);
-      b.addEventListener('click', function () {
-        scroller.scrollTo({ left: item.offsetLeft - items[0].offsetLeft, behavior: reduceMotion ? 'auto' : 'smooth' });
-      });
-      wrap.appendChild(b);
-    });
-    after.insertAdjacentElement('afterend', wrap);
+  function markClone(el) {
+    el.removeAttribute('id');
+    el.setAttribute('aria-hidden', 'true');
+    el.classList.remove('is-active');
+    if (el.hasAttribute('tabindex') || el.matches('a, button')) el.tabIndex = -1;
+    el.querySelectorAll('a, button, [tabindex]').forEach(function (c) { c.tabIndex = -1; });
+    el.querySelectorAll('[id]').forEach(function (c) { c.removeAttribute('id'); });
+    el.querySelectorAll('img').forEach(function (img) { img.alt = ''; });
+    return el;
+  }
 
+  function makeCarousel(opts) {
+    var scroller = opts.scroller;
+    var items = opts.items;
+    var n = items.length;
+    var all = items.slice();
+    var lockUntil = 0;
+    var settleTimer = null;
     var pending = false;
-    function sync() {
-      pending = false;
+    var dots = null;
+
+    items.slice(0, 2).forEach(function (item) {
+      var c = markClone(item.cloneNode(true));
+      c.setAttribute('data-loop-clone', '');
+      opts.appendTo.appendChild(c);
+      all.push(c);
+    });
+
+    function offsetOf(k) { return all[k].offsetLeft - all[0].offsetLeft; }
+    function nearest() {
       var x = scroller.scrollLeft;
       var best = 0;
       var bestD = Infinity;
-      items.forEach(function (item, i) {
-        var d = Math.abs(item.offsetLeft - items[0].offsetLeft - x);
-        if (d < bestD) { bestD = d; best = i; }
+      all.forEach(function (item, k) {
+        var d = Math.abs(offsetOf(k) - x);
+        if (d < bestD) { bestD = d; best = k; }
       });
-      if (x + scroller.clientWidth >= scroller.scrollWidth - 4) best = items.length - 1;
-      toArray(wrap.children).forEach(function (b, i) {
-        b.classList.toggle('is-active', i === best);
-        if (i === best) b.setAttribute('aria-current', 'true');
+      return best;
+    }
+    function markDots(i) {
+      if (!dots) return;
+      toArray(dots.children).forEach(function (b, k) {
+        b.classList.toggle('is-active', k === i);
+        if (k === i) b.setAttribute('aria-current', 'true');
         else b.removeAttribute('aria-current');
       });
     }
+    function go(k, smooth) {
+      k = Math.min(k, all.length - 1);
+      lockUntil = performance.now() + (smooth ? 900 : 60);
+      scroller.scrollTo({ left: offsetOf(k), behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
+      markDots(k % n);
+    }
+    function settle() {
+      var k = nearest();
+      if (k >= n) {
+        lockUntil = performance.now() + 60;
+        scroller.scrollTo({ left: offsetOf(k - n), behavior: 'auto' });
+      }
+    }
+
+    if (opts.dotsLabel) {
+      dots = document.createElement('div');
+      dots.className = 'dots';
+      items.forEach(function (item, i) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', opts.dotsLabel + ' ' + (i + 1) + ' de ' + n);
+        b.addEventListener('click', function () {
+          go(i, true);
+          if (opts.onUser) opts.onUser();
+        });
+        dots.appendChild(b);
+      });
+      opts.after.insertAdjacentElement('afterend', dots);
+    }
+
     scroller.addEventListener('scroll', function () {
-      if (!pending) { pending = true; requestAnimationFrame(sync); }
+      if (!pending) {
+        pending = true;
+        requestAnimationFrame(function () {
+          pending = false;
+          var k = nearest() % n;
+          markDots(k);
+          if (opts.onSwipe && performance.now() >= lockUntil) opts.onSwipe(k);
+        });
+      }
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(settle, 140);
     }, { passive: true });
-    window.addEventListener('resize', sync);
-    sync();
+    if (opts.onUser) {
+      ['touchstart', 'wheel'].forEach(function (type) {
+        scroller.addEventListener(type, opts.onUser, { passive: true });
+      });
+    }
+    window.addEventListener('resize', function () { markDots(nearest() % n); });
+    markDots(0);
+
+    return {
+      all: all,
+      go: go,
+      next: function () { go(nearest() + 1, true); }
+    };
   }
 
   /* ---------------------------------------------------------
@@ -273,8 +351,8 @@
   });
 
   /* ---------------------------------------------------------
-     Panel: tabs con indicador deslizante, avance automático,
-     arrastre en desktop y sincronía con el swipe en mobile
+     Panel: tabs con indicador deslizante y descripción, avance automático
+     en bucle, arrastre en desktop y sincronía con el swipe en mobile
      --------------------------------------------------------- */
   var tabsEl = document.querySelector('.tabs');
   var tabs = toArray(document.querySelectorAll('.tabs__btn'));
@@ -282,9 +360,28 @@
   var screensViewport = document.querySelector('.screens__viewport');
   var screensTrack = document.querySelector('.screens__track');
   var slides = toArray(document.querySelectorAll('.screens__slide'));
+  var caption = document.getElementById('dash-caption');
+  var captionTitle = document.querySelector('[data-dash-title]');
+  var captionText = document.querySelector('[data-dash-text]');
+  var nTabs = tabs.length;
   var activeTab = 0;
   var currentShift = 0;
-  var syncLockUntil = 0;
+  var loopJump = null;
+
+  function updateCaption(i) {
+    var title = tabs[i].getAttribute('data-title');
+    if (!title || captionTitle.textContent === title) return;
+    captionTitle.textContent = title;
+    captionText.textContent = tabs[i].getAttribute('data-text');
+    restartClass(caption, 'is-changing');
+  }
+
+  // desvanece los bordes de la tira de pestañas cuando hay más para deslizar
+  function updateTabEdges() {
+    var x = tabsEl.scrollLeft;
+    tabsEl.classList.toggle('has-left', x > 2);
+    tabsEl.classList.toggle('has-right', x + tabsEl.clientWidth < tabsEl.scrollWidth - 2);
+  }
 
   function moveIndicator() {
     var t = tabs[activeTab];
@@ -300,24 +397,17 @@
     tabsEl.scrollTo({ left: Math.max(0, left), behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
   }
 
-  function showSlide(i, smooth) {
-    var slide = slides[i];
-    if (!slide) return;
-    slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
-    var offset = slide.offsetLeft - slides[0].offsetLeft;
-    if (isMobile()) {
-      screensTrack.style.transform = '';
-      syncLockUntil = performance.now() + (smooth ? 800 : 100);
-      screensViewport.scrollTo({ left: offset, behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
-    } else {
-      var maxShift = screensTrack.scrollWidth - screensViewport.clientWidth;
-      currentShift = Math.min(offset, Math.max(0, maxShift));
-      screensTrack.style.transform = 'translateX(' + -currentShift + 'px)';
-    }
-  }
+  // Carrusel mobile (scroll) con copias para el bucle; en desktop las mismas copias sirven al riel con transform
+  var dashCar = makeCarousel({
+    scroller: screensViewport,
+    items: slides,
+    appendTo: screensTrack,
+    onSwipe: function (i) { if (isMobile() && i !== activeTab) markTab(i); },
+    onUser: function () { dashAuto.hold(); }
+  });
+  var allSlides = dashCar.all;
 
-  function selectTab(i, opts) {
-    opts = opts || {};
+  function markTab(i) {
     tabs.forEach(function (t, k) {
       var on = k === i;
       t.classList.toggle('is-active', on);
@@ -325,44 +415,155 @@
       t.tabIndex = on ? 0 : -1;
     });
     tabPanel.setAttribute('aria-labelledby', tabs[i].id);
+    allSlides.forEach(function (s, k) { s.classList.toggle('is-active', k % nTabs === i); });
     activeTab = i;
     moveIndicator();
     revealTab(tabs[i], true);
-    if (opts.fromScroll) slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
-    else showSlide(i, true);
+    updateCaption(i);
+  }
+
+  function showDesktop(pos, smooth) {
+    var offset = allSlides[pos].offsetLeft - allSlides[0].offsetLeft;
+    var maxShift = Math.max(0, screensTrack.scrollWidth - screensViewport.clientWidth);
+    currentShift = Math.min(offset, maxShift);
+    screensTrack.style.transition = smooth && !reduceMotion ? '' : 'none';
+    screensTrack.style.transform = 'translateX(' + -currentShift + 'px)';
+    if (!smooth || reduceMotion) {
+      void screensTrack.offsetWidth;
+      screensTrack.style.transition = '';
+    }
+    clearTimeout(loopJump);
+    if (pos >= nTabs) {
+      // llegó a la copia del primero: salta sin animación al original
+      loopJump = setTimeout(function () { showDesktop(pos - nTabs, false); }, reduceMotion ? 0 : 560);
+    }
+  }
+
+  function showSlide(pos, smooth) {
+    if (isMobile()) {
+      screensTrack.style.transform = '';
+      dashCar.go(pos, smooth);
+    } else {
+      showDesktop(pos, smooth);
+    }
+  }
+
+  // pos permite avanzar hacia la copia del primero (del último al primero sin rebobinar)
+  function selectTab(i, opts) {
+    opts = opts || {};
+    markTab(i);
+    showSlide(opts.pos != null ? opts.pos : i, true);
     if (opts.focus) tabs[i].focus();
-    if (opts.user) dashAuto.stop();
-    dashAuto.reset();
+    if (opts.user) dashAuto.hold();
+    else dashAuto.reset();
+  }
+  function nextTab(opts) {
+    opts = opts || {};
+    opts.pos = activeTab === nTabs - 1 ? nTabs : activeTab + 1;
+    selectTab((activeTab + 1) % nTabs, opts);
   }
 
   var dashAuto = createAutoplay({
     root: document.querySelector('.dashboard'),
     hoverEls: [tabsEl],
     duration: 5000,
-    next: function () { selectTab((activeTab + 1) % tabs.length); },
-    onProgress: function (p) { tabsEl.style.setProperty('--p', p.toFixed(4)); },
-    onStop: function () { tabsEl.style.setProperty('--p', 0); }
+    next: function () { nextTab(); },
+    onProgress: function (p) { tabsEl.style.setProperty('--p', p.toFixed(4)); }
   });
 
   tabs.forEach(function (tab, i) {
     tab.addEventListener('click', function () { selectTab(i, { user: true }); });
     tab.addEventListener('keydown', function (e) {
       var next = null;
-      if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
-      else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === 'ArrowRight') next = (i + 1) % nTabs;
+      else if (e.key === 'ArrowLeft') next = (i - 1 + nTabs) % nTabs;
       else if (e.key === 'Home') next = 0;
-      else if (e.key === 'End') next = tabs.length - 1;
+      else if (e.key === 'End') next = nTabs - 1;
       if (next !== null) { e.preventDefault(); selectTab(next, { focus: true, user: true }); }
     });
   });
 
   tabPanel.classList.add('is-enhanced');
-  slides.forEach(function (slide, i) {
-    slide.addEventListener('click', function () {
-      if (dragMoved || i === activeTab || isMobile()) return;
-      selectTab(i, { user: true });
+  allSlides.forEach(function (slide, k) {
+    var i = k % nTabs;
+    var zoomBtn = slide.querySelector('.screens__zoom');
+    // clic en una captura vecina: pasa a esa pestaña; en la activa: la amplía
+    slide.addEventListener('click', function (e) {
+      if (dragMoved || e.target.closest('.screens__zoom')) return;
+      if (i !== activeTab) {
+        if (i === (activeTab + 1) % nTabs) nextTab({ user: true });
+        else selectTab(i, { user: true });
+      } else {
+        openZoom(i, slides[i].querySelector('.screens__zoom'));
+      }
     });
+    zoomBtn.addEventListener('click', function () { openZoom(i, slides[i].querySelector('.screens__zoom')); });
   });
+
+  /* Visor de la captura: en desktop se ve completa y legible; en mobile
+     se puede recorrer con el dedo y arranca en la zona de la pestaña */
+  function openZoom(i, opener) {
+    dashAuto.hold();
+    var origin = (slides[i].getAttribute('data-zoom') || '0,0').split(',').map(Number);
+    var modal = document.createElement('div');
+    var scroller = document.createElement('div');
+    var img = document.createElement('img');
+    var hint = document.createElement('p');
+    var closeBtn = document.createElement('button');
+    var heldTimer = setInterval(function () { dashAuto.hold(); }, HOLD_MS - 500);
+    modal.className = 'zoom-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Captura ampliada: ' + tabs[i].getAttribute('data-title'));
+    scroller.className = 'zoom-modal__scroller';
+    scroller.tabIndex = 0;
+    img.src = 'assets/img/dashboard.jpg';
+    img.alt = slides[i].querySelector('img').alt;
+    img.width = 1600;
+    img.height = 775;
+    hint.className = 'zoom-modal__hint';
+    hint.textContent = isMobile() ? 'Desliza para recorrer la captura' : 'Pulsa Esc o haz clic fuera de la imagen para cerrar';
+    closeBtn.className = 'video-modal__close';
+    closeBtn.type = 'button';
+    closeBtn.setAttribute('aria-label', 'Cerrar');
+    closeBtn.textContent = '✕';
+    scroller.appendChild(img);
+    modal.appendChild(scroller);
+    modal.appendChild(hint);
+    modal.appendChild(closeBtn);
+
+    function place() {
+      var k = img.clientWidth / 1600;
+      scroller.scrollLeft = origin[0] * k;
+      scroller.scrollTop = origin[1] * k;
+    }
+    function close() {
+      clearInterval(heldTimer);
+      dashAuto.hold();
+      modal.remove();
+      document.body.style.overflow = '';
+      if (main) main.inert = false;
+      document.removeEventListener('keydown', onKey);
+      opener.focus({ preventScroll: true });
+    }
+    function onKey(e) {
+      if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') {
+        // el foco queda dentro del visor
+        e.preventDefault();
+        (document.activeElement === closeBtn ? scroller : closeBtn).focus();
+      }
+    }
+    modal.addEventListener('click', function (e) { if (e.target === modal || e.target === hint) close(); });
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+    if (main) main.inert = true;
+    if (img.complete) place();
+    else img.addEventListener('load', place);
+    closeBtn.focus();
+  }
 
   // Arrastre con el mouse en desktop
   var drag = null;
@@ -388,51 +589,31 @@
     drag = null;
     tabPanel.classList.remove('is-dragging');
     screensTrack.style.transition = '';
-    if (Math.abs(dx) > 60) {
-      var next = Math.min(tabs.length - 1, Math.max(0, activeTab + (dx < 0 ? 1 : -1)));
-      selectTab(next, { user: true });
-    } else {
-      showSlide(activeTab, true);
-    }
+    if (dx < -60) nextTab({ user: true });
+    else if (dx > 60) selectTab((activeTab - 1 + nTabs) % nTabs, { user: true });
+    else showSlide(activeTab, true);
   });
 
-  // Swipe en mobile: la pestaña sigue a la captura visible
-  var swipePending = false;
-  screensViewport.addEventListener('scroll', function () {
-    if (swipePending || !isMobile()) return;
-    swipePending = true;
-    requestAnimationFrame(function () {
-      swipePending = false;
-      if (performance.now() < syncLockUntil) return;
-      var x = screensViewport.scrollLeft;
-      var best = 0;
-      var bestD = Infinity;
-      slides.forEach(function (s, k) {
-        var d = Math.abs(s.offsetLeft - slides[0].offsetLeft - x);
-        if (d < bestD) { bestD = d; best = k; }
-      });
-      if (best !== activeTab) selectTab(best, { fromScroll: true });
-    });
-  }, { passive: true });
-  ['touchstart', 'wheel'].forEach(function (type) {
-    screensViewport.addEventListener(type, function () { dashAuto.stop(); }, { passive: true });
-  });
-  tabsEl.addEventListener('scroll', function () {
-    tabsEl.classList.toggle('is-end', tabsEl.scrollLeft + tabsEl.clientWidth >= tabsEl.scrollWidth - 2);
-  }, { passive: true });
+  tabsEl.addEventListener('scroll', updateTabEdges, { passive: true });
 
   window.addEventListener('resize', function () {
     moveIndicator();
     showSlide(activeTab, false);
+    updateTabEdges();
   });
-  moveIndicator();
+  markTab(0);
   showSlide(0, false);
+  updateTabEdges();
   dashAuto.reset();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveIndicator(); movePill(); });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { moveIndicator(); movePill(); updateTabEdges(); });
+  }
 
   /* ---------------------------------------------------------
-     Productos: avance automático (desktop) y puntos (mobile)
+     Productos: en desktop la lista rota sola; en mobile el carrusel
+     avanza solo en bucle, con puntos
      --------------------------------------------------------- */
+  var productsRow = document.querySelector('.products__row');
   var productsList = document.querySelector('.products__list');
   var products = toArray(document.querySelectorAll('.product'));
   var devices = document.querySelector('.products__devices');
@@ -448,19 +629,18 @@
       restartClass(devices, 'is-swapping');
     }
     activeProduct = i;
-    if (user) productAuto.stop();
-    productAuto.reset();
+    if (user) productAuto.hold();
+    else productAuto.reset();
   }
 
   var productAuto = createAutoplay({
-    root: document.querySelector('.products__row'),
+    root: productsRow,
     hoverEls: [productsList],
     duration: 5000,
     when: function () { return !isMobile(); },
     next: function () { activateProduct((activeProduct + 1) % products.length); },
     onProgress: function (p) { products[activeProduct].style.setProperty('--p', p.toFixed(4)); },
-    onStart: function () { productsList.classList.add('is-autoplay'); },
-    onStop: function () { productsList.classList.remove('is-autoplay'); }
+    onStart: function () { productsList.classList.add('is-autoplay'); }
   });
 
   products.forEach(function (p, i) {
@@ -470,7 +650,21 @@
     });
   });
   productAuto.reset();
-  makeDots(productsList, products, 'Producto', productsList);
+
+  var productCar = makeCarousel({
+    scroller: productsList,
+    items: products,
+    appendTo: productsList,
+    dotsLabel: 'Producto',
+    after: productsList,
+    onUser: function () { productCarAuto.hold(); }
+  });
+  var productCarAuto = createAutoplay({
+    root: productsRow,
+    duration: 4000,
+    when: isMobile,
+    next: function () { productCar.next(); }
+  });
 
   /* ---------------------------------------------------------
      Proveedores: "Ver más" + carrusel infinito
@@ -588,12 +782,8 @@
       gaugePct = s.pct;
       renderGauge(s.pct);
     }
-    if (opts.user) {
-      // a partir de aquí los cambios los pide el usuario: se anuncian
-      stageCard.setAttribute('aria-live', 'polite');
-      stageAuto.stop();
-    }
-    stageAuto.reset();
+    if (opts.user) stageAuto.hold();
+    else stageAuto.reset();
   }
 
   var stageAuto = createAutoplay({
@@ -603,11 +793,7 @@
     when: function () { return chartShown && window.innerWidth > 1199; },
     next: function () { setStage(currentStage + 1, { animate: true }); },
     onProgress: function (p) { stageCard.style.setProperty('--p', p.toFixed(4)); },
-    onStart: function () { stageCard.classList.add('is-autoplay'); },
-    onStop: function () {
-      stageCard.classList.remove('is-autoplay');
-      stageCard.style.removeProperty('--p');
-    }
+    onStart: function () { stageCard.classList.add('is-autoplay'); }
   });
 
   gaugeTrack.setAttribute('d', arcPath(180, 0));
@@ -661,8 +847,8 @@
       restartClass(stepsImage, 'is-changing');
     }
     activeStep = i;
-    if (user) stepAuto.stop();
-    stepAuto.reset();
+    if (user) stepAuto.hold();
+    else stepAuto.reset();
   }
 
   var stepAuto = createAutoplay({
@@ -671,8 +857,7 @@
     duration: 5000,
     when: function () { return !isMobile(); },
     next: function () { openStep((activeStep + 1) % steps.length); },
-    onProgress: function (p) { steps[activeStep].style.setProperty('--p', p.toFixed(4)); },
-    onStop: function () { steps.forEach(function (s) { s.style.removeProperty('--p'); }); }
+    onProgress: function (p) { steps[activeStep].style.setProperty('--p', p.toFixed(4)); }
   });
 
   stepAuto.reset();
@@ -681,11 +866,10 @@
     var head = step.querySelector('.step__head');
     head.addEventListener('click', function () {
       var wasOpen = step.classList.contains('is-open');
-      if (wasOpen && !isMobile()) { stepAuto.stop(); return; }
+      if (wasOpen && !isMobile()) { stepAuto.hold(); return; }
       if (wasOpen) {
         // en mobile se puede cerrar el paso abierto
         setOpen(step, head, false);
-        stepAuto.stop();
         return;
       }
       openStep(i, true);
@@ -728,7 +912,21 @@
     });
     tGrid.classList.add('is-marquee');
   }
-  makeDots(tGrid, tItems, 'Testimonio', tGrid);
+  // mobile: carrusel en bucle (las copias del bucle se agregan al final de la segunda columna)
+  var tCar = makeCarousel({
+    scroller: tGrid,
+    items: tItems,
+    appendTo: tGrid.querySelectorAll('.testimonials__track')[1],
+    dotsLabel: 'Testimonio',
+    after: tGrid,
+    onUser: function () { tCarAuto.hold(); }
+  });
+  var tCarAuto = createAutoplay({
+    root: tGrid,
+    duration: 5000,
+    when: isMobile,
+    next: function () { tCar.next(); }
+  });
 
   /* ---------------------------------------------------------
      Video testimonial (solo si hay URL configurada)
@@ -813,6 +1011,7 @@
   var form = document.getElementById('lead-form');
   var formCard = document.querySelector('.form-card');
   var success = document.querySelector('.form-success');
+  var successName = document.querySelector('[data-success-name]');
   var submitBtn = form.querySelector('.lead-form__submit');
   var submitText = form.querySelector('.lead-form__submit-text');
   var statusEl = form.querySelector('.lead-form__status');
@@ -914,9 +1113,14 @@
 
     setBusy(true);
     sendLead(data).then(function () {
+      // "¡Genial, Ana!": primer nombre con mayúscula inicial
+      var first = data.nombre.split(/\s+/)[0] || '';
+      successName.textContent = first ? ', ' + first.charAt(0).toUpperCase() + first.slice(1) : '';
       form.hidden = true;
       success.hidden = false;
-      success.querySelector('.form-success__title').focus();
+      success.querySelector('.form-success__title').focus({ preventScroll: true });
+      // la tarjeta se acorta: se centra en pantalla para que se vea el mensaje completo
+      formCard.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
       confetti(formCard);
     }).catch(function () {
       statusEl.textContent = 'No pudimos enviar tus datos. Inténtalo nuevamente o escríbenos a afiliados@tinbet.pe.';

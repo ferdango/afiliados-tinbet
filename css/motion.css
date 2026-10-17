@@ -53,6 +53,16 @@
 .ticker.is-running .ticker__track { animation: ticker var(--dur, 40s) linear infinite; }
 .ticker.is-running .ticker__band--back .ticker__track { animation-direction: reverse; }
 
+/* ---------- Panel: etiqueta, descripción y visor ---------- */
+@keyframes dot-pulse { 50% { box-shadow: 0 0 0 5px rgba(152, 223, 75, 0); } from, to { box-shadow: 0 0 0 0 rgba(152, 223, 75, 0.5); } }
+.eyebrow::before { animation: dot-pulse 2s ease-in-out infinite; }
+@keyframes swap-in { from { opacity: 0; translate: 0 10px; } }
+.dash-caption.is-changing > * { animation: swap-in 0.45s var(--ease-out) backwards; }
+.dash-caption.is-changing > :nth-child(2) { animation-delay: 0.06s; }
+@keyframes zoom-in { from { opacity: 0; scale: 0.94; } }
+.zoom-modal { animation: fade-in 0.25s ease; }
+.zoom-modal__scroller { animation: zoom-in 0.4s var(--ease-out); }
+
 /* ---------- Productos: cambio de producto ---------- */
 @keyframes devices-swap { 35% { opacity: 0.55; scale: 0.97; } }
 .products__devices.is-swapping { animation: devices-swap 0.7s var(--ease-out); }
@@ -77,7 +87,6 @@
 .js .chart.is-inview :is(.stage-card, .gauge) { animation: reveal-up 0.9s var(--ease-out) 1.2s backwards; }
 .tier.is-active .tier__dot { animation: pulse-ring 1.8s ease-out infinite; }
 
-@keyframes swap-in { from { opacity: 0; translate: 0 10px; } }
 .stage-card.is-changing :is(.stage-card__title, .stage-card__value) { animation: swap-in 0.45s var(--ease-out); }
 
 /* Barras (tablet / mobile): se llenan de izquierda a derecha */
@@ -112,8 +121,20 @@
 @keyframes spin-angle { to { --angle: 360deg; } }
 .form-glow { animation: spin-angle 9s linear infinite; }
 @keyframes pop { from { opacity: 0; scale: 0.4; } }
-.form-success:not([hidden]) > img { animation: pop 0.7s var(--ease-spring) backwards; }
-.form-success:not([hidden]) .form-success__text { animation: reveal-up 0.7s var(--ease-out) 0.2s backwards; }
+/* Éxito: el círculo y el check se dibujan; luego entra el resto en cascada */
+@keyframes draw-ring { from { stroke-dashoffset: 227; } }
+@keyframes draw-check { from { stroke-dashoffset: 44; } }
+.form-success:not([hidden]) .form-success__icon { animation: pop 0.6s var(--ease-spring) backwards; }
+.form-success:not([hidden]) .form-success__ring { animation: draw-ring 0.8s var(--ease-out) 0.15s backwards; }
+.form-success:not([hidden]) .form-success__check { animation: draw-check 0.45s var(--ease-out) 0.7s backwards; }
+.form-success:not([hidden]) > :not(.form-success__icon) { animation: reveal-up 0.7s var(--ease-out) backwards; }
+.form-success:not([hidden]) > .form-success__text { animation-delay: 0.3s; }
+.form-success:not([hidden]) > .form-success__next { animation-delay: 0.45s; }
+.form-success:not([hidden]) > .form-success__actions { animation-delay: 0.6s; }
+.form-success:not([hidden]) .form-success__steps li { animation: reveal-up 0.6s var(--ease-out) backwards; }
+.form-success:not([hidden]) .form-success__steps li:nth-child(1) { animation-delay: 0.6s; }
+.form-success:not([hidden]) .form-success__steps li:nth-child(2) { animation-delay: 0.7s; }
+.form-success:not([hidden]) .form-success__steps li:nth-child(3) { animation-delay: 0.8s; }
 
 /* Confeti al enviar (lo genera main.js) */
 @keyframes confetti {

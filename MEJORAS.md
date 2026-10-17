@@ -69,6 +69,11 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
 
 ### Sliders
 - **Panel de afiliados:**
+  - Las 5 pestañas mostraban la misma captura. Ahora cada una muestra la zona del panel que le corresponde (resumen, comisiones por canal, tabla del mes, tendencias de 12 meses, montos en soles).
+  - Debajo de las pestañas, un título y una descripción explican qué ofrece cada una.
+  - Botón **Ampliar**, o clic en la captura activa: abre la captura completa en un visor. En mobile se puede recorrer con el dedo y arranca en la zona de la pestaña elegida.
+  - En mobile, las pestañas pasan a ser una cápsula compacta con bordes que se desvanecen, en lugar de las franjas grises de borde a borde. La captura es más grande, con sombra y brillo detrás.
+  - Etiqueta "Panel de afiliados" sobre el título.
   - Píldora que se desliza entre pestañas y se llena mientras avanza sola cada 5 s.
   - Las capturas no activas se atenúan. En desktop se puede arrastrar con el mouse o hacer clic en la siguiente.
   - En mobile, al deslizar con el dedo cambia la pestaña activa.
@@ -81,7 +86,11 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
 - **Pasos de influencer (desktop):** avanzan solos con una línea de progreso vertical y una numeración 01–04. Una etiqueta sobre la imagen indica el paso actual y la imagen hace un zoom suave en cada cambio.
 - **Testimonios (desktop):** dos columnas infinitas en sentidos opuestos que se pausan al pasar el mouse, junto a un texto y un CTA "Quiero ser afiliado".
 - **Carruseles mobile** (productos y testimonios): puntos indicadores sincronizados con el deslizamiento. Se corrigió que la primera tarjeta quedaba pegada al borde.
-- **Reglas comunes:** todo avance automático corre solo con la sección en pantalla, se pausa con el mouse o el foco encima del control y se detiene del todo en cuanto el usuario elige algo.
+- **Carruseles mobile en movimiento:** productos (cada 4 s) y testimonios (cada 5 s) también avanzan solos, además del panel.
+- **Bucle infinito:**
+  - Todos los sliders pasan del último elemento al primero sin rebobinar: el riel avanza hacia una copia de la primera tarjeta y salta, sin que se note, a la original.
+  - Si el usuario elige algo (clic, toque o deslizar), se respeta su elección 6 segundos y el bucle continúa.
+  - Se pausan solo mientras el mouse o el foco de teclado está sobre el control, y solo corren con la sección en pantalla.
 
 ### Elementos nuevos
 - **Cinta de beneficios:** dos bandas cruzadas en movimiento entre el hero y el panel (RevShare hasta 50%, CPA hasta S/ 600, pagos mensuales…).
@@ -101,7 +110,10 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
 ### Formulario
 - **Etiquetas flotantes:** el nombre del campo queda visible al escribir; antes desaparecía con el placeholder.
 - **Halo de color** girando detrás de la tarjeta.
-- **Mensaje de éxito** con animación y confeti.
+- **Mensaje de éxito rediseñado:**
+  - Antes era una tarjeta de alto fijo casi vacía. Ahora tiene un check que se dibuja, el título personalizado ("¡Genial, Ana!"), una lista de "Qué sigue" en 3 pasos y un botón para escribir por WhatsApp.
+  - Incluye un enlace a las preguntas frecuentes.
+  - Al enviarse, la tarjeta se centra en pantalla y suelta confeti.
 
 ### Cuidado del rendimiento y la accesibilidad
 - Sin librerías: las animaciones usan CSS (`transform`, `opacity`) y un único cálculo por cuadro al hacer scroll.

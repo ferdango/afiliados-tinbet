@@ -192,27 +192,47 @@
     <!-- ============ PANEL / DASHBOARD ============ -->
     <section class="dashboard" id="dashboard" aria-labelledby="dashboard-title">
       <span class="glow glow--products" aria-hidden="true"></span>
-      <div class="container">
-        <h2 class="section-title dashboard__title" id="dashboard-title" data-split>Un sistema avanzado para gestionar tus <span class="text-green">ganancias</span></h2>
+      <div class="container dashboard__head">
+        <p class="eyebrow" data-reveal>Panel de afiliados</p>
+        <h2 class="section-title dashboard__title" id="dashboard-title" data-split style="--d:.1s">Un sistema avanzado para gestionar tus <span class="text-green">ganancias</span></h2>
       </div>
       <div class="tabs" role="tablist" aria-label="Secciones del panel de afiliados" data-reveal style="--d:.2s">
         <div class="tabs__track">
           <span class="tabs__indicator" aria-hidden="true"><span class="tabs__progress"></span></span>
-          <button class="tabs__btn is-active" type="button" role="tab" id="tab-0" aria-selected="true" aria-controls="dash-panel">Dashboard</button>
-          <button class="tabs__btn" type="button" role="tab" id="tab-1" aria-selected="false" aria-controls="dash-panel" tabindex="-1">Campañas</button>
-          <button class="tabs__btn" type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="dash-panel" tabindex="-1">Afiliados</button>
-          <button class="tabs__btn" type="button" role="tab" id="tab-3" aria-selected="false" aria-controls="dash-panel" tabindex="-1">Estadísticas</button>
-          <button class="tabs__btn" type="button" role="tab" id="tab-4" aria-selected="false" aria-controls="dash-panel" tabindex="-1">Operaciones</button>
+          <button class="tabs__btn is-active" type="button" role="tab" id="tab-0" aria-selected="true" aria-controls="dash-panel" data-title="Resumen completo" data-text="Ve de un vistazo tus clics, registros, primeros depósitos y ganancias del mes.">Dashboard</button>
+          <button class="tabs__btn" type="button" role="tab" id="tab-1" aria-selected="false" aria-controls="dash-panel" tabindex="-1" data-title="Comisiones por canal" data-text="Mide cuánto genera cada canal o campaña y enfócate en lo que mejor funciona.">Campañas</button>
+          <button class="tabs__btn" type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="dash-panel" tabindex="-1" data-title="Tus jugadores referidos" data-text="Sigue registros, primeros depósitos y tasas de conversión de los jugadores que traes.">Afiliados</button>
+          <button class="tabs__btn" type="button" role="tab" id="tab-3" aria-selected="false" aria-controls="dash-panel" tabindex="-1" data-title="Tendencias de 12 meses" data-text="Compara clics, registros, primeros depósitos y ganancias mes a mes.">Estadísticas</button>
+          <button class="tabs__btn" type="button" role="tab" id="tab-4" aria-selected="false" aria-controls="dash-panel" tabindex="-1" data-title="Montos en soles" data-text="Revisa ganancias, bonos y apuestas de cada periodo con el detalle en soles.">Operaciones</button>
         </div>
       </div>
-      <div class="screens" id="dash-panel" role="tabpanel" aria-labelledby="tab-0" data-reveal style="--d:.3s">
+      <div class="dash-caption" id="dash-caption" data-reveal style="--d:.25s">
+        <p class="dash-caption__title" data-dash-title>Resumen completo</p>
+        <p class="dash-caption__text" data-dash-text>Ve de un vistazo tus clics, registros, primeros depósitos y ganancias del mes.</p>
+      </div>
+      <div class="screens" id="dash-panel" role="tabpanel" aria-labelledby="tab-0" aria-describedby="dash-caption" data-reveal style="--d:.3s">
         <div class="screens__viewport">
           <div class="screens__track">
-            <div class="screens__slide"><picture><img src="assets/img/dashboard.jpg" alt="Panel de afiliados: resumen del mes, tendencias y comisiones por canal" width="1600" height="775"></picture></div>
-            <div class="screens__slide"><picture><img src="assets/img/dashboard.jpg" alt="" width="1600" height="775" loading="lazy"></picture></div>
-            <div class="screens__slide"><picture><img src="assets/img/dashboard.jpg" alt="" width="1600" height="775" loading="lazy"></picture></div>
-            <div class="screens__slide"><picture><img src="assets/img/dashboard.jpg" alt="" width="1600" height="775" loading="lazy"></picture></div>
-            <div class="screens__slide"><picture><img src="assets/img/dashboard.jpg" alt="" width="1600" height="775" loading="lazy"></picture></div>
+            <div class="screens__slide is-active" style="--sx:-49.35%;--sw:149.3%;--sy:0%;--msx:-46.99%;--msw:146.97%;--msy:0%" data-zoom="529,0">
+              <picture><img src="assets/img/dashboard.jpg" alt="Panel de afiliados: resumen con tendencias, métricas del mes y comisiones por canal" width="1600" height="775"></picture>
+              <button class="screens__zoom" type="button" aria-label="Ampliar captura: Resumen completo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Ampliar</button>
+            </div>
+            <div class="screens__slide" style="--sx:-100%;--sw:200%;--sy:-27.48%;--msx:-180.7%;--msw:280.7%;--msy:-45.16%" data-zoom="1030,340">
+              <picture><img src="assets/img/dashboard.jpg" alt="Panel de afiliados: comisiones por canal del mes" width="1600" height="775" loading="lazy"></picture>
+              <button class="screens__zoom" type="button" aria-label="Ampliar captura: Comisiones por canal"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Ampliar</button>
+            </div>
+            <div class="screens__slide" style="--sx:-50%;--sw:200%;--sy:-27.48%;--msx:-91.23%;--msw:280.7%;--msy:-45.16%" data-zoom="520,340">
+              <picture><img src="assets/img/dashboard.jpg" alt="Panel de afiliados: clics, inscripciones y primeros depósitos del mes" width="1600" height="775" loading="lazy"></picture>
+              <button class="screens__zoom" type="button" aria-label="Ampliar captura: Tus jugadores referidos"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Ampliar</button>
+            </div>
+            <div class="screens__slide" style="--sx:-100%;--sw:200%;--sy:0%;--msx:-146.88%;--msw:250%;--msy:0%" data-zoom="860,100">
+              <picture><img src="assets/img/dashboard.jpg" alt="Panel de afiliados: gráfico de tendencias de los últimos 12 meses" width="1600" height="775" loading="lazy"></picture>
+              <button class="screens__zoom" type="button" aria-label="Ampliar captura: Tendencias de 12 meses"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Ampliar</button>
+            </div>
+            <div class="screens__slide" style="--sx:0%;--sw:200%;--sy:-27.48%;--msx:0%;--msw:280.7%;--msy:-45.16%" data-zoom="0,340">
+              <picture><img src="assets/img/dashboard.jpg" alt="Panel de afiliados: ganancias, bonos y apuestas del mes anterior" width="1600" height="775" loading="lazy"></picture>
+              <button class="screens__zoom" type="button" aria-label="Ampliar captura: Montos en soles"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Ampliar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -735,10 +755,24 @@
               </div>
             </form>
             <div class="form-success" hidden>
-              <img src="assets/icons/check-circle.svg" alt="" width="80" height="80">
+              <div class="form-success__icon" aria-hidden="true">
+                <svg viewBox="0 0 80 80" width="64" height="64"><circle class="form-success__ring" cx="40" cy="40" r="36"/><path class="form-success__check" d="M25 41.5l10 10 20-21"/></svg>
+              </div>
               <div class="form-success__text">
-                <h3 class="form-success__title" tabindex="-1">¡Genial!</h3>
-                <p class="form-success__msg">Hemos enviado tus datos. En menos de 1 hora un(a) asesor(a) se contactará contigo.</p>
+                <h3 class="form-success__title" tabindex="-1">¡Genial<span data-success-name></span>!</h3>
+                <p class="form-success__msg">Recibimos tus datos. En menos de 1 hora un(a) asesor(a) se contactará contigo.</p>
+              </div>
+              <div class="form-success__next">
+                <p class="form-success__next-title">Qué sigue</p>
+                <ol class="form-success__steps">
+                  <li>Tu asesor(a) te contacta y resuelve tus dudas.</li>
+                  <li>Activamos tu cuenta de afiliado.</li>
+                  <li>Recibes tus enlaces de seguimiento y materiales promocionales.</li>
+                </ol>
+              </div>
+              <div class="form-success__actions">
+                <a class="btn btn--lg form-success__wa" href="https://wa.me/51987665213?text=Hola%2C%20acabo%20de%20registrarme%20como%20afiliado%20de%20Tinbet" target="_blank" rel="noopener"><img src="assets/icons/whatsapp.svg" alt="" width="22" height="22"> Escríbenos por WhatsApp</a>
+                <a class="form-success__link" href="#faqs">Mientras tanto, revisa las preguntas frecuentes</a>
               </div>
             </div>
           </div>
