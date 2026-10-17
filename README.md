@@ -15,7 +15,7 @@ y entra a <http://localhost:5500>.
 ## Versiones
 
 - Tag [`figma-fiel`](../../tree/figma-fiel): maquetación tal cual el diseño de Figma.
-- `master`: versión mejorada (contenido, UX, accesibilidad, rendimiento y SEO). El detalle está en [MEJORAS.md](MEJORAS.md).
+- `master`: versión mejorada (contenido, UX, accesibilidad, rendimiento, SEO) y modernizada con animaciones, sliders automáticos y microinteracciones. El detalle está en [MEJORAS.md](MEJORAS.md).
 
 ## Configuración
 
@@ -32,11 +32,27 @@ Al inicio de `js/main.js` está el objeto `CONFIG`, que hay que completar antes 
 ```
 index.html          Marcado de todas las secciones
 css/styles.css      Estilos (desktop 1512 px, ajustes 1024–1511 px y layout móvil < 1024 px)
-js/main.js          Menú móvil, tabs del panel, productos, etapas de comisión + gauge,
-                    acordeones (pasos, FAQ, footer), validación del formulario y escalado
+css/motion.css      Animaciones: apariciones, títulos por palabra, entrada del hero,
+                    gráfico de comisiones, flotaciones y modo de movimiento reducido
+js/main.js          Menú móvil, sliders con avance automático (panel, productos, etapas,
+                    pasos), carruseles, acordeones, botón fijo mobile y formulario
+js/motion.js        Títulos por palabra, disparadores al hacer scroll, contadores,
+                    parallax, cinta en movimiento y efectos de cursor
 assets/img          Imágenes exportadas de Figma (PNG/JPG + versiones AVIF optimizadas)
 assets/icons        Iconos SVG exportados de Figma
 ```
+
+## Animaciones
+
+- Se activan con atributos en el HTML, sin librerías:
+  - `data-reveal`: el bloque aparece desde abajo al entrar en pantalla. `style="--d:.3s"` le da un retraso.
+  - `data-stagger`: igual, pero hijo por hijo.
+  - `data-split`: el título entra palabra por palabra.
+  - `data-count`: el número cuenta desde 0. Acepta prefijos y sufijos, como `S/ 15,000` o `300+`.
+  - `data-parallax="0.05"`: desplazamiento suave con el scroll, solo en desktop.
+  - `data-inview`: agrega la clase `.is-inview` para animaciones propias.
+- Los sliders avanzan solos solo mientras están en pantalla, se pausan con el mouse o el foco encima y se detienen del todo cuando el usuario elige algo.
+- Con *Reducir movimiento* activado en el sistema operativo se muestra todo sin animar. Si `motion.js` no carga, a los 3 s todo el contenido queda visible igual.
 
 ## Notas sobre la fidelidad al diseño
 

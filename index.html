@@ -7,6 +7,9 @@
   <meta name="description" content="Únete al Programa de Afiliados Tinbet y gana comisiones de hasta 50% (RevShare) o hasta S/ 600 por jugador (CPA) promocionando apuestas deportivas y casino en Perú.">
   <meta name="theme-color" content="#060706">
   <meta name="color-scheme" content="dark">
+  <!-- Activa los estados iniciales de las animaciones antes del primer pintado.
+       Si motion.js no llega a cargar, a los 3 s se muestra todo sin animar. -->
+  <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__motionReady)document.documentElement.classList.remove('js')},3000);</script>
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_PE">
   <meta property="og:site_name" content="Afiliados Tinbet">
@@ -22,6 +25,8 @@
   <link rel="preload" as="image" type="image/avif" href="assets/img/hero-hand.avif" media="(min-width: 1024px)" fetchpriority="high">
   <link rel="preload" as="image" type="image/avif" href="assets/img/hero-hand-mobile.avif" media="(max-width: 1023px)" fetchpriority="high">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <script src="js/motion.js" defer></script>
   <script src="js/main.js" defer></script>
 
   <script type="application/ld+json">
@@ -61,6 +66,7 @@
           </picture>
         </a>
         <nav class="header__nav" aria-label="Principal">
+          <span class="header__pill" aria-hidden="true"></span>
           <a class="header__link" href="#productos" data-spy="productos">Productos</a>
           <a class="header__link" href="#comisiones" data-spy="comisiones">Comisiones</a>
           <a class="header__link" href="#influencers" data-spy="influencers">Influencers</a>
@@ -79,6 +85,7 @@
         Inicia sesión <img src="assets/icons/arrow-right.svg" alt="" width="18" height="18">
       </a>
     </div>
+    <span class="header__progress" aria-hidden="true"></span>
   </header>
 
   <!-- ============ MENÚ MÓVIL ============ -->
@@ -105,14 +112,15 @@
     <!-- ============ HERO ============ -->
     <section class="hero" aria-labelledby="hero-title">
       <span class="glow glow--hero" aria-hidden="true"></span>
+      <span class="hero__spot" aria-hidden="true"></span>
       <div class="container hero__container">
         <div class="hero__content">
-          <p class="hero__eyebrow">Programa de Afiliados</p>
-          <h1 class="hero__title" id="hero-title">Gana dinero <br class="br-m">con el mejor producto <br class="br-m">de <span class="text-gradient">apuestas deportivas y casino</span></h1>
-          <a class="btn btn--lg hero__btn" href="#contacto">
+          <p class="hero__eyebrow" data-reveal>Programa de Afiliados</p>
+          <h1 class="hero__title" id="hero-title" data-split style="--d:.1s">Gana dinero <br class="br-m">con el mejor producto <br class="br-m">de <span class="text-gradient">apuestas deportivas y casino</span></h1>
+          <a class="btn btn--lg hero__btn" href="#contacto" data-reveal style="--d:.55s">
             Conviértete en Afiliado <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24">
           </a>
-          <p class="hero__login">¿Ya tienes una cuenta? <a href="#" data-login-link>Inicia sesión</a></p>
+          <p class="hero__login" data-reveal style="--d:.65s">¿Ya tienes una cuenta? <a href="#" data-login-link>Inicia sesión</a></p>
         </div>
 
         <div class="hero__hand crop">
@@ -132,7 +140,7 @@
 
         <div class="hero__tag hero__tag--rev" aria-hidden="true">
           <p class="hero__tag-title">Rev Share</p>
-          <p class="hero__tag-text">Desde 50%</p>
+          <p class="hero__tag-text">Hasta 50%</p>
         </div>
         <div class="hero__tag hero__tag--cpa" aria-hidden="true">
           <p class="hero__tag-title">CPA</p>
@@ -147,15 +155,15 @@
             <dl class="stats__grid">
               <div class="stats__item stats__item--1">
                 <dt class="stats__label">Usuarios</dt>
-                <dd class="stats__value">200,000+</dd>
+                <dd class="stats__value" data-count>200,000+</dd>
               </div>
               <div class="stats__item stats__item--2">
                 <dt class="stats__label">Afiliados en todo el Perú</dt>
-                <dd class="stats__value">300+</dd>
+                <dd class="stats__value" data-count>300+</dd>
               </div>
               <div class="stats__item stats__item--3">
                 <dt class="stats__label">Ingresos potenciales al mes</dt>
-                <dd class="stats__value">S/ 15,000</dd>
+                <dd class="stats__value" data-count>S/ 15,000</dd>
               </div>
             </dl>
           </div>
@@ -163,14 +171,33 @@
       </div>
     </section>
 
+    <!-- ============ CINTA DE BENEFICIOS (decorativa: todo se repite en la página) ============ -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__band ticker__band--back">
+        <div class="ticker__track">
+          <ul class="ticker__group">
+            <li>Apuestas deportivas</li><li>Casino en vivo</li><li>Tragamonedas</li><li>Virtuales</li><li>Hípicas</li><li>150+ proveedores</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ticker__band">
+        <div class="ticker__track">
+          <ul class="ticker__group">
+            <li>RevShare hasta 50%</li><li>CPA hasta S/ 600</li><li>Pagos mensuales</li><li>Manager dedicado</li><li>Registro gratuito</li><li>Panel de estadísticas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <!-- ============ PANEL / DASHBOARD ============ -->
     <section class="dashboard" id="dashboard" aria-labelledby="dashboard-title">
       <span class="glow glow--products" aria-hidden="true"></span>
       <div class="container">
-        <h2 class="section-title dashboard__title" id="dashboard-title" data-reveal>Un sistema avanzado para gestionar tus <span class="text-green">ganancias</span></h2>
+        <h2 class="section-title dashboard__title" id="dashboard-title" data-split>Un sistema avanzado para gestionar tus <span class="text-green">ganancias</span></h2>
       </div>
-      <div class="tabs" role="tablist" aria-label="Secciones del panel de afiliados">
+      <div class="tabs" role="tablist" aria-label="Secciones del panel de afiliados" data-reveal style="--d:.2s">
         <div class="tabs__track">
+          <span class="tabs__indicator" aria-hidden="true"><span class="tabs__progress"></span></span>
           <button class="tabs__btn is-active" type="button" role="tab" id="tab-0" aria-selected="true" aria-controls="dash-panel">Dashboard</button>
           <button class="tabs__btn" type="button" role="tab" id="tab-1" aria-selected="false" aria-controls="dash-panel" tabindex="-1">Campañas</button>
           <button class="tabs__btn" type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="dash-panel" tabindex="-1">Afiliados</button>
@@ -178,7 +205,7 @@
           <button class="tabs__btn" type="button" role="tab" id="tab-4" aria-selected="false" aria-controls="dash-panel" tabindex="-1">Operaciones</button>
         </div>
       </div>
-      <div class="screens" id="dash-panel" role="tabpanel" aria-labelledby="tab-0">
+      <div class="screens" id="dash-panel" role="tabpanel" aria-labelledby="tab-0" data-reveal style="--d:.3s">
         <div class="screens__viewport">
           <div class="screens__track">
             <div class="screens__slide"><picture><img src="assets/img/dashboard.jpg" alt="Panel de afiliados: resumen del mes, tendencias y comisiones por canal" width="1600" height="775"></picture></div>
@@ -194,13 +221,13 @@
     <!-- ============ PRODUCTOS ============ -->
     <section class="products" id="productos" aria-labelledby="products-title">
       <div class="container">
-        <div class="section-head products__head" data-reveal>
-          <h2 class="section-title products__title" id="products-title">Nuestros <span class="text-green">productos</span> generando más ingresos para ti</h2>
-          <p class="section-text products__text">Después del primer depósito, los jugadores siguen con nosotros porque siempre encuentran algo interesante entre las mil opciones de entretenimiento</p>
+        <div class="section-head products__head">
+          <h2 class="section-title products__title" id="products-title" data-split>Nuestros <span class="text-green">productos</span> generando más ingresos para ti</h2>
+          <p class="section-text products__text" data-reveal style="--d:.25s">Después del primer depósito, los jugadores siguen con nosotros porque siempre encuentran algo interesante entre las mil opciones de entretenimiento</p>
         </div>
         <div class="products__row" data-reveal>
           <ul class="products__list">
-            <li class="product is-active" tabindex="0">
+            <li class="product is-active" tabindex="0" style="--pc:#98df4b">
               <span class="product__icon"><img src="assets/icons/soccer-ball.svg" alt="" width="32" height="32"></span>
               <span class="product__body">
                 <span class="product__title">Apuestas deportivas</span>
@@ -208,8 +235,9 @@
                 <span class="product__tag product__tag--green">150+ proveedores. 10,400+ juegos y tragamonedas</span>
               </span>
               <span class="product__phone crop" aria-hidden="true"><picture><source srcset="assets/img/phone.avif" type="image/avif"><img src="assets/img/phone.png" alt="" width="1400" height="1050" loading="lazy"></picture></span>
+              <span class="product__progress" aria-hidden="true"></span>
             </li>
-            <li class="product" tabindex="0">
+            <li class="product" tabindex="0" style="--pc:#f6c52b">
               <span class="product__icon"><img src="assets/img/icon-casino.png" alt="" width="32" height="32"></span>
               <span class="product__body">
                 <span class="product__title">Casino</span>
@@ -217,8 +245,9 @@
                 <span class="product__tag product__tag--yellow">150+ proveedores. 10,400+ juegos y tragamonedas</span>
               </span>
               <span class="product__phone crop" aria-hidden="true"><picture><source srcset="assets/img/phone.avif" type="image/avif"><img src="assets/img/phone.png" alt="" width="1400" height="1050" loading="lazy"></picture></span>
+              <span class="product__progress" aria-hidden="true"></span>
             </li>
-            <li class="product" tabindex="0">
+            <li class="product" tabindex="0" style="--pc:#2391ff">
               <span class="product__icon"><img src="assets/icons/soccer-ball.svg" alt="" width="32" height="32"></span>
               <span class="product__body">
                 <span class="product__title">Virtuales</span>
@@ -226,8 +255,9 @@
                 <span class="product__tag product__tag--blue">150+ proveedores. 10,400+ juegos y tragamonedas</span>
               </span>
               <span class="product__phone crop" aria-hidden="true"><picture><source srcset="assets/img/phone.avif" type="image/avif"><img src="assets/img/phone.png" alt="" width="1400" height="1050" loading="lazy"></picture></span>
+              <span class="product__progress" aria-hidden="true"></span>
             </li>
-            <li class="product" tabindex="0">
+            <li class="product" tabindex="0" style="--pc:#844ced">
               <span class="product__icon"><img src="assets/img/icon-hipicas.png" alt="" width="32" height="32"></span>
               <span class="product__body">
                 <span class="product__title">Hípicas</span>
@@ -235,9 +265,10 @@
                 <span class="product__tag product__tag--purple">150+ proveedores. 10,400+ juegos y tragamonedas</span>
               </span>
               <span class="product__phone crop" aria-hidden="true"><picture><source srcset="assets/img/phone.avif" type="image/avif"><img src="assets/img/phone.png" alt="" width="1400" height="1050" loading="lazy"></picture></span>
+              <span class="product__progress" aria-hidden="true"></span>
             </li>
           </ul>
-          <div class="devices products__devices">
+          <div class="devices products__devices" data-parallax="0.05">
             <div class="devices__laptop crop"><picture><source srcset="assets/img/laptop.avif" type="image/avif"><img src="assets/img/laptop.png" alt="Tinbet en laptop" width="1800" height="1210" loading="lazy"></picture></div>
             <div class="devices__phone crop"><picture><source srcset="assets/img/phone.avif" type="image/avif"><img src="assets/img/phone.png" alt="Tinbet en smartphone" width="1400" height="1050" loading="lazy"></picture></div>
           </div>
@@ -248,9 +279,9 @@
     <!-- ============ ECOSISTEMA ============ -->
     <section class="ecosystem" aria-labelledby="ecosystem-title">
       <div class="container">
-        <h2 class="section-title ecosystem__title" id="ecosystem-title" data-reveal>Ecosistema <span class="text-green">Tinbet</span></h2>
+        <h2 class="section-title ecosystem__title" id="ecosystem-title" data-split>Ecosistema <span class="text-green">Tinbet</span></h2>
         <div class="ecosystem__row">
-          <dl class="ecosystem__list">
+          <dl class="ecosystem__list" data-stagger>
             <div class="ecosystem__item">
               <dt>Productos</dt>
               <dd>Apuestas deportivas, Casino en vivo, Tragamonedas, Virtuales e Hípicas</dd>
@@ -276,14 +307,14 @@
               <dd>Soles peruanos (PEN)</dd>
             </div>
           </dl>
-          <div class="ecosystem__laptop crop"><picture><source srcset="assets/img/laptop.avif" type="image/avif"><img src="assets/img/laptop.png" alt="Plataforma Tinbet en laptop" width="1800" height="1210" loading="lazy"></picture></div>
-          <div class="devices ecosystem__devices">
+          <div class="ecosystem__laptop crop" data-reveal data-parallax="0.04" style="--d:.2s"><picture><source srcset="assets/img/laptop.avif" type="image/avif"><img src="assets/img/laptop.png" alt="Plataforma Tinbet en laptop" width="1800" height="1210" loading="lazy"></picture></div>
+          <div class="devices ecosystem__devices" data-reveal>
             <div class="devices__laptop crop"><picture><source srcset="assets/img/laptop.avif" type="image/avif"><img src="assets/img/laptop.png" alt="Plataforma Tinbet en laptop" width="1800" height="1210" loading="lazy"></picture></div>
             <div class="devices__phone crop"><picture><source srcset="assets/img/phone.avif" type="image/avif"><img src="assets/img/phone.png" alt="Plataforma Tinbet en smartphone" width="1400" height="1050" loading="lazy"></picture></div>
           </div>
         </div>
       </div>
-      <div class="providers" aria-label="Proveedores de juegos" role="region">
+      <div class="providers" aria-label="Proveedores de juegos" role="region" data-reveal>
         <ul class="providers__track">
           <li class="provider"><img src="assets/img/providers/aviatrix.png" alt="Aviatrix" width="98" height="12" loading="lazy"></li>
           <li class="provider"><img src="assets/img/providers/endorphina.png" alt="Endorphina" width="114" height="49" loading="lazy"></li>
@@ -298,13 +329,13 @@
     <!-- ============ COMISIONES ============ -->
     <section class="commissions" id="comisiones" aria-labelledby="commissions-title">
       <div class="commissions__stage">
-        <div class="commissions__head" data-reveal>
-          <h2 class="section-title commissions__title" id="commissions-title">Convierte tu audiencia en <span class="text-green">ingresos recurrentes</span></h2>
-          <p class="section-text commissions__text">Recibe cada mes un porcentaje de los ingresos netos generados por tus jugadores referidos. Nuestro sistema de comisiones escalonadas simplifica el proceso.</p>
-          <a class="btn btn--lg commissions__btn" href="#contacto">Empezar como Afiliado <img src="assets/icons/arrow-right.svg" alt="" width="28" height="28"></a>
+        <div class="commissions__head">
+          <h2 class="section-title commissions__title" id="commissions-title" data-split>Convierte tu audiencia en <span class="text-green">ingresos recurrentes</span></h2>
+          <p class="section-text commissions__text" data-reveal style="--d:.25s">Recibe cada mes un porcentaje de los ingresos netos generados por tus jugadores referidos. Nuestro sistema de comisiones escalonadas simplifica el proceso.</p>
+          <a class="btn btn--lg commissions__btn" href="#contacto" data-reveal style="--d:.35s">Empezar como Afiliado <img src="assets/icons/arrow-right.svg" alt="" width="28" height="28"></a>
         </div>
 
-        <div class="chart">
+        <div class="chart" data-inview>
           <img class="chart__wave" src="assets/img/commission-wave.svg" alt="" width="1511" height="627">
 
           <button class="tier tier--1 is-active" type="button" aria-pressed="true" aria-label="Etapa 1: 20% de comisión, de 0 a S/ 5,000">
@@ -333,13 +364,13 @@
           <span class="chart__label chart__label--5" aria-hidden="true">S/ 20,000 a S/ 25,000</span>
           <span class="chart__label chart__label--6" aria-hidden="true">+ S/ 50,000</span>
 
-          <div class="stage-card" aria-live="polite">
+          <div class="stage-card" aria-live="off">
             <div class="stage-card__nav">
               <button class="stage-card__arrow" type="button" aria-label="Etapa anterior" data-tier-prev>
                 <img src="assets/icons/chevron-left.svg" alt="" width="16" height="16">
               </button>
               <span class="stage-card__dots" aria-hidden="true">
-                <i class="is-active"></i><i></i><i></i><i></i><i></i><i></i>
+                <i class="is-active"><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i>
               </span>
               <button class="stage-card__arrow stage-card__arrow--next" type="button" aria-label="Etapa siguiente" data-tier-next>
                 <img src="assets/icons/chevron-left.svg" alt="" width="16" height="16">
@@ -361,32 +392,33 @@
         </div>
 
         <!-- Versión móvil / tablet: barras -->
-        <ul class="bars" aria-label="Comisiones por nivel de ingresos mensuales">
-          <li class="bar" style="--w:23.2%"><span class="bar__pct">20%</span><span class="bar__range">0 a S/ 5,000</span></li>
-          <li class="bar" style="--w:28.6%"><span class="bar__pct">25%</span><span class="bar__range">S/ 5,000 a S/ 10,000</span></li>
-          <li class="bar" style="--w:32.4%"><span class="bar__pct">30%</span><span class="bar__range">S/ 10,000 a S/ 15,000</span></li>
-          <li class="bar" style="--w:36.3%"><span class="bar__pct">35%</span><span class="bar__range">S/ 15,000 a S/ 20,000</span></li>
-          <li class="bar" style="--w:40.5%"><span class="bar__pct">40%</span><span class="bar__range">S/ 20,000 a S/ 25,000</span></li>
-          <li class="bar" style="--w:50%"><span class="bar__pct">50%</span><span class="bar__range">+ S/ 50,000</span></li>
+        <ul class="bars" aria-label="Comisiones por nivel de ingresos mensuales" data-inview>
+          <li class="bar" style="--w:23.2%"><span class="bar__pct" data-count>20%</span><span class="bar__range">0 a S/ 5,000</span></li>
+          <li class="bar" style="--w:28.6%"><span class="bar__pct" data-count>25%</span><span class="bar__range">S/ 5,000 a S/ 10,000</span></li>
+          <li class="bar" style="--w:32.4%"><span class="bar__pct" data-count>30%</span><span class="bar__range">S/ 10,000 a S/ 15,000</span></li>
+          <li class="bar" style="--w:36.3%"><span class="bar__pct" data-count>35%</span><span class="bar__range">S/ 15,000 a S/ 20,000</span></li>
+          <li class="bar" style="--w:40.5%"><span class="bar__pct" data-count>40%</span><span class="bar__range">S/ 20,000 a S/ 25,000</span></li>
+          <li class="bar" style="--w:50%"><span class="bar__pct" data-count>50%</span><span class="bar__range">+ S/ 50,000</span></li>
         </ul>
-        <div class="bars__cta"><a class="btn btn--lg bars__btn" href="#contacto">Empezar como Afiliado <img src="assets/icons/arrow-right.svg" alt="" width="28" height="28"></a></div>
+        <div class="bars__cta" data-reveal><a class="btn btn--lg bars__btn" href="#contacto">Empezar como Afiliado <img src="assets/icons/arrow-right.svg" alt="" width="28" height="28"></a></div>
       </div>
     </section>
 
     <!-- ============ INFLUENCERS ============ -->
     <section class="influencer" id="influencers" aria-labelledby="influencer-title">
       <div class="container">
-        <div class="section-head influencer__head" data-reveal>
-          <p class="influencer__eyebrow">Programa de Afiliados</p>
-          <h2 class="section-title influencer__title" id="influencer-title">¿Cómo convertirse en <span class="text-green">influencer</span>?</h2>
-          <p class="section-text influencer__text">¡Unirse es rápido y fácil! Sigue estos pasos para empezar a ganar:</p>
-          <a class="btn btn--lg influencer__btn" href="#contacto">Conviértete en embajador <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24"></a>
+        <div class="section-head influencer__head">
+          <p class="influencer__eyebrow" data-reveal>Programa de Afiliados</p>
+          <h2 class="section-title influencer__title" id="influencer-title" data-split style="--d:.1s">¿Cómo convertirse en <span class="text-green">influencer</span>?</h2>
+          <p class="section-text influencer__text" data-reveal style="--d:.3s">¡Unirse es rápido y fácil! Sigue estos pasos para empezar a ganar:</p>
+          <a class="btn btn--lg influencer__btn" href="#contacto" data-reveal style="--d:.4s">Conviértete en embajador <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24"></a>
         </div>
       </div>
       <div class="steps" id="como-ganar">
-        <ol class="steps__list">
+        <ol class="steps__list" data-stagger>
           <li class="step is-open">
             <button class="step__head" type="button" aria-expanded="true" aria-controls="step-1">
+              <span class="step__num" aria-hidden="true">01</span>
               <span class="step__title">Regístrate</span>
               <img class="step__icon" src="assets/icons/plus-white.svg" alt="" width="24" height="24">
             </button>
@@ -396,9 +428,11 @@
                 <picture><source srcset="assets/img/influencer-sports.avif" type="image/avif"><img class="step__media" src="assets/img/influencer-sports.jpg" alt="Deportistas con la camiseta de Tinbet" width="1000" height="773" loading="lazy"></picture>
               </div>
             </div>
+            <span class="step__bar" aria-hidden="true"><span class="step__fill"></span></span>
           </li>
           <li class="step">
             <button class="step__head" type="button" aria-expanded="false" aria-controls="step-2">
+              <span class="step__num" aria-hidden="true">02</span>
               <span class="step__title">Conviértete en partner</span>
               <img class="step__icon" src="assets/icons/plus-white.svg" alt="" width="24" height="24">
             </button>
@@ -408,9 +442,11 @@
                 <picture><source srcset="assets/img/influencer-sports.avif" type="image/avif"><img class="step__media" src="assets/img/influencer-sports.jpg" alt="" width="1000" height="773" loading="lazy"></picture>
               </div>
             </div>
+            <span class="step__bar" aria-hidden="true"><span class="step__fill"></span></span>
           </li>
           <li class="step">
             <button class="step__head" type="button" aria-expanded="false" aria-controls="step-3">
+              <span class="step__num" aria-hidden="true">03</span>
               <span class="step__title">Crea contenido</span>
               <img class="step__icon" src="assets/icons/plus-white.svg" alt="" width="24" height="24">
             </button>
@@ -420,9 +456,11 @@
                 <picture><source srcset="assets/img/influencer-sports.avif" type="image/avif"><img class="step__media" src="assets/img/influencer-sports.jpg" alt="" width="1000" height="773" loading="lazy"></picture>
               </div>
             </div>
+            <span class="step__bar" aria-hidden="true"><span class="step__fill"></span></span>
           </li>
           <li class="step">
             <button class="step__head" type="button" aria-expanded="false" aria-controls="step-4">
+              <span class="step__num" aria-hidden="true">04</span>
               <span class="step__title">Recibe pagos</span>
               <img class="step__icon" src="assets/icons/plus-white.svg" alt="" width="24" height="24">
             </button>
@@ -432,10 +470,15 @@
                 <picture><source srcset="assets/img/influencer-sports.avif" type="image/avif"><img class="step__media" src="assets/img/influencer-sports.jpg" alt="" width="1000" height="773" loading="lazy"></picture>
               </div>
             </div>
+            <span class="step__bar" aria-hidden="true"><span class="step__fill"></span></span>
           </li>
         </ol>
-        <div class="steps__image">
-          <picture><img src="assets/img/influencer.jpg" alt="Apretón de manos entre dos socios comerciales" width="1544" height="1029" loading="lazy"></picture>
+        <div class="steps__image" data-reveal>
+          <picture><img src="assets/img/influencer.jpg" alt="Apretón de manos entre dos socios comerciales" width="1544" height="1029" loading="lazy" data-parallax="0.08"></picture>
+          <div class="steps__badge" aria-hidden="true">
+            <span class="steps__badge-count"><b data-step-num>01</b> / 04</span>
+            <span class="steps__badge-title" data-step-title>Regístrate</span>
+          </div>
         </div>
       </div>
     </section>
@@ -443,11 +486,11 @@
     <!-- ============ FAQ ============ -->
     <section class="faq" id="faqs" aria-labelledby="faq-title">
       <div class="container faq__container">
-        <div class="section-head faq__head" data-reveal>
-          <h2 class="section-title faq__title" id="faq-title">Preguntas <span class="text-green">Frecuentes</span></h2>
-          <p class="section-text faq__text">Revisa nuestras preguntas más comunes y actívate como Afiliado Tinbet</p>
+        <div class="section-head faq__head">
+          <h2 class="section-title faq__title" id="faq-title" data-split>Preguntas <span class="text-green">Frecuentes</span></h2>
+          <p class="section-text faq__text" data-reveal style="--d:.25s">Revisa nuestras preguntas más comunes y actívate como Afiliado Tinbet</p>
         </div>
-        <div class="faq__list" data-reveal>
+        <div class="faq__list" data-stagger>
           <div class="faq-item is-open">
             <h3 class="faq-item__h">
               <button class="faq-item__head" type="button" aria-expanded="true" aria-controls="faq-1">
@@ -513,60 +556,68 @@
       <span class="glow glow--testimonials" aria-hidden="true"></span>
       <span class="glow glow--blue" aria-hidden="true"></span>
       <div class="container testimonials__container">
-        <h2 class="section-title testimonials__title" id="testimonials-title" data-reveal>Afiliados que ya están <span class="text-green">generando ingresos</span></h2>
-        <div class="testimonials__grid" data-reveal>
+        <div class="testimonials__intro">
+          <h2 class="section-title testimonials__title" id="testimonials-title" data-split>Afiliados que ya están <span class="text-green">generando ingresos</span></h2>
+          <p class="section-text testimonials__text" data-reveal style="--d:.25s">Más de 300 afiliados en todo el Perú ya promocionan Tinbet y cobran sus comisiones cada mes.</p>
+          <a class="btn btn--lg testimonials__btn" href="#contacto" data-reveal style="--d:.35s">Quiero ser afiliado <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24"></a>
+        </div>
+        <div class="testimonials__grid" data-reveal style="--d:.2s">
           <div class="testimonials__col">
-            <article class="testimonial">
-              <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
-              <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
-              <footer class="testimonial__footer">
-                <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
-                <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
-                <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
-              </footer>
-            </article>
-            <button class="testimonial-video" type="button" aria-label="Ver video testimonial" data-video="">
-              <picture><source srcset="assets/img/testimonial-video.avif" type="image/avif"><img class="testimonial-video__img" src="assets/img/testimonial-video.jpg" alt="" width="860" height="573" loading="lazy"></picture>
-              <img class="testimonial-video__play" src="assets/icons/play.svg" alt="" width="64" height="64">
-            </button>
-            <article class="testimonial">
-              <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
-              <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
-              <footer class="testimonial__footer">
-                <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
-                <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
-                <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
-              </footer>
-            </article>
+            <div class="testimonials__track">
+              <article class="testimonial">
+                <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
+                <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
+                <footer class="testimonial__footer">
+                  <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
+                  <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
+                  <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
+                </footer>
+              </article>
+              <button class="testimonial-video" type="button" aria-label="Ver video testimonial" data-video="">
+                <picture><source srcset="assets/img/testimonial-video.avif" type="image/avif"><img class="testimonial-video__img" src="assets/img/testimonial-video.jpg" alt="" width="860" height="573" loading="lazy"></picture>
+                <img class="testimonial-video__play" src="assets/icons/play.svg" alt="" width="64" height="64">
+              </button>
+              <article class="testimonial">
+                <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
+                <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
+                <footer class="testimonial__footer">
+                  <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
+                  <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
+                  <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
+                </footer>
+              </article>
+            </div>
           </div>
           <div class="testimonials__col testimonials__col--offset">
-            <article class="testimonial">
-              <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
-              <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
-              <footer class="testimonial__footer">
-                <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
-                <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
-                <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
-              </footer>
-            </article>
-            <article class="testimonial">
-              <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
-              <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
-              <footer class="testimonial__footer">
-                <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
-                <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
-                <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
-              </footer>
-            </article>
-            <article class="testimonial">
-              <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
-              <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
-              <footer class="testimonial__footer">
-                <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
-                <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
-                <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
-              </footer>
-            </article>
+            <div class="testimonials__track">
+              <article class="testimonial">
+                <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
+                <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
+                <footer class="testimonial__footer">
+                  <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
+                  <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
+                  <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
+                </footer>
+              </article>
+              <article class="testimonial">
+                <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
+                <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
+                <footer class="testimonial__footer">
+                  <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
+                  <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
+                  <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
+                </footer>
+              </article>
+              <article class="testimonial">
+                <img class="testimonial__logo" src="assets/img/tinbet-logo-sm.png" alt="Tinbet" width="93" height="24" loading="lazy">
+                <blockquote class="testimonial__text">Trabajo con Afiliados Tinbet desde su lanzamiento. Probé otras plataformas, pero aquí encontré la mejor solución: reportes completos y datos confiables. Siempre recibo una atención rápida y profesional de un equipo que se esfuerza por ofrecer las mejores soluciones. Espero seguir haciendo crecer mi negocio con ellos. ¡Lo recomiendo!</blockquote>
+                <footer class="testimonial__footer">
+                  <img class="testimonial__avatar" src="assets/img/avatar.png" alt="" width="48" height="48" loading="lazy">
+                  <span class="testimonial__person"><strong>Fernando Goicochea</strong><span>CEO de XYZ</span></span>
+                  <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
+                </footer>
+              </article>
+            </div>
           </div>
         </div>
       </div>
@@ -574,19 +625,25 @@
 
     <!-- ============ CONTACTO ============ -->
     <section class="contact" id="contacto" aria-labelledby="contact-title">
-      <div class="container contact__container" data-reveal>
+      <div class="container contact__container">
         <div class="contact__info">
           <div class="contact__intro">
-            <div class="avatars" aria-hidden="true">
+            <div class="avatars" aria-hidden="true" data-reveal>
               <img src="assets/img/avatar-1.png" alt="" width="44" height="44" loading="lazy">
               <img src="assets/img/avatar-2.png" alt="" width="44" height="44" loading="lazy">
               <img src="assets/img/avatar-3.png" alt="" width="44" height="44" loading="lazy">
               <span class="avatars__more"><img src="assets/icons/plus.svg" alt="" width="24" height="24"></span>
             </div>
-            <h2 class="section-title contact__title" id="contact-title">Empieza a ganar <span class="text-green">ahora</span></h2>
-            <p class="contact__text">Después de registrarte, un manager se pondrá en contacto contigo: responderá todas tus preguntas y te ayudará a comenzar.</p>
+            <h2 class="section-title contact__title" id="contact-title" data-split style="--d:.1s">Empieza a ganar <span class="text-green">ahora</span></h2>
+            <p class="contact__text" data-reveal style="--d:.3s">Después de registrarte, un manager se pondrá en contacto contigo: responderá todas tus preguntas y te ayudará a comenzar.</p>
+            <ul class="benefits" data-stagger>
+              <li>Registro gratuito en solo 1 minuto</li>
+              <li>Comisiones de hasta 50% (RevShare) o S/ 600 por jugador (CPA)</li>
+              <li>Pagos mensuales de tus comisiones</li>
+              <li>Manager dedicado y materiales promocionales</li>
+            </ul>
           </div>
-          <div class="contact__channels">
+          <div class="contact__channels" data-reveal>
             <p class="contact__subtitle">Contáctanos</p>
             <div class="contact__cards">
               <a class="channel" href="mailto:afiliados@tinbet.pe">
@@ -601,85 +658,88 @@
           </div>
         </div>
 
-        <div class="form-card">
-          <form class="lead-form" id="lead-form" novalidate aria-labelledby="form-title">
-            <h3 class="lead-form__title" id="form-title">Contáctanos</h3>
-            <div class="lead-form__fields">
-              <div class="lead-form__group">
-                <div class="field">
-                  <label class="sr-only" for="f-nombre">Nombres y apellidos</label>
-                  <input id="f-nombre" type="text" name="nombre" placeholder="Nombres y apellidos" autocomplete="name" required minlength="3" aria-describedby="e-nombre">
-                  <p class="field__error" id="e-nombre" data-msg="Ingresa tus nombres y apellidos."></p>
+        <div class="form-wrap" data-reveal style="--d:.2s">
+          <span class="form-glow" aria-hidden="true"></span>
+          <div class="form-card">
+            <form class="lead-form" id="lead-form" novalidate aria-labelledby="form-title">
+              <h3 class="lead-form__title" id="form-title">Contáctanos</h3>
+              <div class="lead-form__fields">
+                <div class="lead-form__group">
+                  <div class="field">
+                    <input id="f-nombre" type="text" name="nombre" placeholder=" " autocomplete="name" required minlength="3" aria-describedby="e-nombre">
+                    <label class="field__label" for="f-nombre">Nombres y apellidos</label>
+                    <p class="field__error" id="e-nombre" data-msg="Ingresa tus nombres y apellidos."></p>
+                  </div>
+                  <div class="field">
+                    <input id="f-documento" type="text" name="documento" placeholder=" " inputmode="numeric" maxlength="11" required pattern="\d{8}|\d{11}" aria-describedby="e-documento">
+                    <label class="field__label" for="f-documento">DNI o RUC</label>
+                    <p class="field__error" id="e-documento" data-msg="Ingresa un DNI (8 dígitos) o RUC (11 dígitos)."></p>
+                  </div>
                 </div>
-                <div class="field">
-                  <label class="sr-only" for="f-documento">DNI o RUC</label>
-                  <input id="f-documento" type="text" name="documento" placeholder="DNI/RUC" inputmode="numeric" maxlength="11" required pattern="\d{8}|\d{11}" aria-describedby="e-documento">
-                  <p class="field__error" id="e-documento" data-msg="Ingresa un DNI (8 dígitos) o RUC (11 dígitos)."></p>
-                </div>
-              </div>
-              <div class="lead-form__group">
-                <div class="field">
-                  <label class="sr-only" for="f-celular">Celular</label>
-                  <input id="f-celular" type="tel" name="celular" placeholder="Celular" autocomplete="tel-national" inputmode="numeric" maxlength="11" required pattern="9\d{2} ?\d{3} ?\d{3}" aria-describedby="e-celular">
-                  <p class="field__error" id="e-celular" data-msg="Ingresa un celular de 9 dígitos que empiece con 9."></p>
-                </div>
-                <div class="field">
-                  <label class="sr-only" for="f-email">Correo electrónico</label>
-                  <input id="f-email" type="email" name="email" placeholder="Correo electrónico" autocomplete="email" required aria-describedby="e-email">
-                  <p class="field__error" id="e-email" data-msg="Ingresa un correo electrónico válido."></p>
-                </div>
-                <div class="field field--select">
-                  <label class="sr-only" for="f-perfil">¿Quién eres?</label>
-                  <select id="f-perfil" name="perfil" required aria-describedby="e-perfil">
-                    <option value="" selected disabled>¿Quién eres?</option>
-                    <option>Influencer / Creador de contenido</option>
-                    <option>Streamer</option>
-                    <option>Dueño de sitio web o blog</option>
-                    <option>Agencia de marketing</option>
-                    <option>Otro</option>
-                  </select>
-                  <img src="assets/icons/chevron-up.svg" alt="" width="16" height="16">
-                  <p class="field__error" id="e-perfil" data-msg="Selecciona una opción."></p>
-                </div>
-                <div class="field field--select">
-                  <label class="sr-only" for="f-experiencia">Nivel de experiencia</label>
-                  <select id="f-experiencia" name="experiencia" required aria-describedby="e-experiencia">
-                    <option value="" selected disabled>Nivel de experiencia</option>
-                    <option>Estoy empezando</option>
-                    <option>Intermedio</option>
-                    <option>Avanzado</option>
-                  </select>
-                  <img src="assets/icons/chevron-up.svg" alt="" width="16" height="16">
-                  <p class="field__error" id="e-experiencia" data-msg="Selecciona tu nivel de experiencia."></p>
-                </div>
-              </div>
-            </div>
-            <div class="lead-form__footer">
-              <div class="lead-form__checks">
-                <div class="check">
-                  <input id="f-terminos" type="checkbox" name="terminos" required aria-describedby="e-terminos">
-                  <span class="check__box" aria-hidden="true"></span>
-                  <label class="check__text" for="f-terminos">Tengo más de 18 años y acepto los <a href="#" target="_blank" rel="noopener">Términos y Condiciones</a></label>
-                  <p class="field__error check__error" id="e-terminos" data-msg="Debes ser mayor de edad y aceptar los Términos y Condiciones."></p>
-                </div>
-                <div class="check">
-                  <input id="f-marketing" type="checkbox" name="marketing">
-                  <span class="check__box" aria-hidden="true"></span>
-                  <label class="check__text" for="f-marketing">Autorizo a Tinbet.pe a usar mis datos para enviarme ofertas, promociones e información sobre su plataforma online</label>
+                <div class="lead-form__group">
+                  <div class="field">
+                    <input id="f-celular" type="tel" name="celular" placeholder=" " autocomplete="tel-national" inputmode="numeric" maxlength="11" required pattern="9\d{2} ?\d{3} ?\d{3}" aria-describedby="e-celular">
+                    <label class="field__label" for="f-celular">Celular</label>
+                    <p class="field__error" id="e-celular" data-msg="Ingresa un celular de 9 dígitos que empiece con 9."></p>
+                  </div>
+                  <div class="field">
+                    <input id="f-email" type="email" name="email" placeholder=" " autocomplete="email" required aria-describedby="e-email">
+                    <label class="field__label" for="f-email">Correo electrónico</label>
+                    <p class="field__error" id="e-email" data-msg="Ingresa un correo electrónico válido."></p>
+                  </div>
+                  <div class="field field--select">
+                    <select id="f-perfil" name="perfil" required aria-describedby="e-perfil">
+                      <option value="" selected disabled>¿Quién eres?</option>
+                      <option>Influencer / Creador de contenido</option>
+                      <option>Streamer</option>
+                      <option>Dueño de sitio web o blog</option>
+                      <option>Agencia de marketing</option>
+                      <option>Otro</option>
+                    </select>
+                    <label class="field__label" for="f-perfil">¿Quién eres?</label>
+                    <img src="assets/icons/chevron-up.svg" alt="" width="16" height="16">
+                    <p class="field__error" id="e-perfil" data-msg="Selecciona una opción."></p>
+                  </div>
+                  <div class="field field--select">
+                    <select id="f-experiencia" name="experiencia" required aria-describedby="e-experiencia">
+                      <option value="" selected disabled>Nivel de experiencia</option>
+                      <option>Estoy empezando</option>
+                      <option>Intermedio</option>
+                      <option>Avanzado</option>
+                    </select>
+                    <label class="field__label" for="f-experiencia">Nivel de experiencia</label>
+                    <img src="assets/icons/chevron-up.svg" alt="" width="16" height="16">
+                    <p class="field__error" id="e-experiencia" data-msg="Selecciona tu nivel de experiencia."></p>
+                  </div>
                 </div>
               </div>
-              <button class="btn btn--lg lead-form__submit" type="submit">
-                <span class="lead-form__submit-text">Quiero saber más</span>
-                <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24">
-              </button>
-              <p class="lead-form__status" role="alert" aria-live="assertive"></p>
-            </div>
-          </form>
-          <div class="form-success" hidden>
-            <img src="assets/icons/check-circle.svg" alt="" width="80" height="80">
-            <div class="form-success__text">
-              <h3 class="form-success__title" tabindex="-1">¡Genial!</h3>
-              <p class="form-success__msg">Hemos enviado tus datos. En menos de 1 hora un(a) asesor(a) se contactará contigo.</p>
+              <div class="lead-form__footer">
+                <div class="lead-form__checks">
+                  <div class="check">
+                    <input id="f-terminos" type="checkbox" name="terminos" required aria-describedby="e-terminos">
+                    <span class="check__box" aria-hidden="true"></span>
+                    <label class="check__text" for="f-terminos">Tengo más de 18 años y acepto los <a href="#" target="_blank" rel="noopener">Términos y Condiciones</a></label>
+                    <p class="field__error check__error" id="e-terminos" data-msg="Debes ser mayor de edad y aceptar los Términos y Condiciones."></p>
+                  </div>
+                  <div class="check">
+                    <input id="f-marketing" type="checkbox" name="marketing">
+                    <span class="check__box" aria-hidden="true"></span>
+                    <label class="check__text" for="f-marketing">Autorizo a Tinbet.pe a usar mis datos para enviarme ofertas, promociones e información sobre su plataforma online</label>
+                  </div>
+                </div>
+                <button class="btn btn--lg lead-form__submit" type="submit">
+                  <span class="lead-form__submit-text">Quiero saber más</span>
+                  <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24">
+                </button>
+                <p class="lead-form__status" role="alert" aria-live="assertive"></p>
+              </div>
+            </form>
+            <div class="form-success" hidden>
+              <img src="assets/icons/check-circle.svg" alt="" width="80" height="80">
+              <div class="form-success__text">
+                <h3 class="form-success__title" tabindex="-1">¡Genial!</h3>
+                <p class="form-success__msg">Hemos enviado tus datos. En menos de 1 hora un(a) asesor(a) se contactará contigo.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -690,15 +750,15 @@
     <section class="cta" aria-labelledby="cta-title">
       <span class="glow glow--footer" aria-hidden="true"></span>
       <div class="container cta__container">
-        <div class="cta__content" data-reveal>
-          <h2 class="section-title cta__title" id="cta-title"><span class="text-green">Empieza a ganar</span> hoy mismo con Tinbet</h2>
-          <a class="btn btn--lg cta__btn" href="#contacto">Únete al Programa de Afiliados <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24"></a>
+        <div class="cta__content">
+          <h2 class="section-title cta__title" id="cta-title" data-split><span class="text-green">Empieza a ganar</span> hoy mismo con Tinbet</h2>
+          <a class="btn btn--lg cta__btn" href="#contacto" data-reveal style="--d:.35s">Únete al Programa de Afiliados <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24"></a>
         </div>
-        <div class="cta__art" aria-hidden="true">
+        <div class="cta__art" aria-hidden="true" data-reveal data-parallax="-0.06" style="--d:.2s">
           <div class="cta__piece cta__piece--astro"><div class="cta__crop"><picture><source srcset="assets/img/cta-astronaut.avif" type="image/avif"><img src="assets/img/cta-astronaut.png" alt="" width="1080" height="1080" loading="lazy"></picture></div></div>
           <div class="cta__piece cta__piece--coins"><div class="cta__crop"><picture><source srcset="assets/img/cta-coins.avif" type="image/avif"><img src="assets/img/cta-coins.png" alt="" width="1080" height="1080" loading="lazy"></picture></div></div>
         </div>
-        <div class="cta__art-m" aria-hidden="true">
+        <div class="cta__art-m" aria-hidden="true" data-reveal>
           <div class="cta__m-piece cta__m-piece--coins crop"><picture><source srcset="assets/img/cta-coins.avif" type="image/avif"><img src="assets/img/cta-coins.png" alt="" width="1080" height="1080" loading="lazy"></picture></div>
           <div class="cta__m-piece cta__m-piece--astro crop"><picture><source srcset="assets/img/cta-astronaut.avif" type="image/avif"><img src="assets/img/cta-astronaut.png" alt="" width="1080" height="1080" loading="lazy"></picture></div>
         </div>
@@ -709,7 +769,7 @@
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <div class="container">
-      <div class="footer__box">
+      <div class="footer__box" data-stagger>
         <div class="footer__brand">
           <picture>
             <source media="(max-width: 1023px)" srcset="assets/img/footer-logo-mobile.png" width="140" height="36">
@@ -759,7 +819,11 @@
 
 </div>
 
+  <!-- Registro fijo en mobile: aparece tras el hero y se oculta al llegar al formulario -->
+  <a class="btn sticky-cta" href="#contacto">Regístrate gratis <img src="assets/icons/arrow-right.svg" alt="" width="20" height="20"></a>
+
   <a class="whatsapp" href="https://wa.me/51987665213?text=Hola%2C%20quiero%20ser%20afiliado%20de%20Tinbet" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+    <span class="whatsapp__label" aria-hidden="true">¿Hablamos?</span>
     <img src="assets/icons/whatsapp.svg" alt="" width="43" height="44">
   </a>
 </body>

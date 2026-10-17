@@ -22,6 +22,15 @@
   function isMobile() {
     return window.innerWidth <= MOBILE_MAX;
   }
+  function toArray(list) {
+    return Array.prototype.slice.call(list);
+  }
+  function restartClass(el, cls) {
+    if (reduceMotion || !el) return;
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+  }
 
   /* ---------------------------------------------------------
      Escalado de las "escenas" con posiciones absolutas
@@ -50,62 +59,170 @@
   }
 
   /* ---------------------------------------------------------
-     Header: sombra al hacer scroll + sección activa (scrollspy)
+     Avance automático de los sliders
+     Corre solo si el bloque está en pantalla, la pestaña está visible y el
+     usuario no tiene el mouse o el foco encima. Se detiene del todo en
+     cuanto el usuario elige algo por su cuenta.
      --------------------------------------------------------- */
-  var header = document.querySelector('.header');
-  function onScroll() {
-    header.classList.toggle('is-scrolled', window.scrollY > 8);
-  }
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
+  var autoplays = [];
+  var looping = false;
+  var lastTs = null;
 
-  var spyLinks = document.querySelectorAll('[data-spy]');
-  if ('IntersectionObserver' in window && spyLinks.length) {
-    var spyObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        spyLinks.forEach(function (link) {
-          var active = link.getAttribute('data-spy') === entry.target.id;
-          link.classList.toggle('is-active', active);
-          if (active) link.setAttribute('aria-current', 'location');
-          else link.removeAttribute('aria-current');
-        });
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-    spyLinks.forEach(function (link) {
-      var section = document.getElementById(link.getAttribute('data-spy'));
-      if (section) spyObserver.observe(section);
+  function createAutoplay(opts) {
+    var a = {
+      root: opts.root,
+      duration: opts.duration,
+      t: 0,
+      inView: false,
+      hover: false,
+      focus: false,
+      stopped: reduceMotion || !opts.root,
+      running: function () {
+        return !a.stopped && a.inView && !a.hover && !a.focus && !document.hidden && (!opts.when || opts.when());
+      },
+      progress: function (p) { if (opts.onProgress) opts.onProgress(p); },
+      reset: function () {
+        a.t = 0;
+        if (!a.stopped) a.progress(0);
+        wake();
+      },
+      stop: function () {
+        if (a.stopped) return;
+        a.stopped = true;
+        if (opts.onStop) opts.onStop();
+      },
+      next: opts.next
+    };
+    if (a.stopped) return a;
+    // la pausa por hover es sobre el control en sí, no sobre toda la sección
+    (opts.hoverEls || [a.root]).forEach(function (el) {
+      el.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') a.hover = true; });
+      el.addEventListener('pointerleave', function () { a.hover = false; wake(); });
     });
+    a.root.addEventListener('focusin', function () { a.focus = true; });
+    a.root.addEventListener('focusout', function (e) {
+      if (!a.root.contains(e.relatedTarget)) { a.focus = false; wake(); }
+    });
+    autoplays.push(a);
+    if (opts.onStart) opts.onStart();
+    return a;
+  }
+
+  function loop(ts) {
+    // tiempo real aunque el navegador reduzca los cuadros (tras una pausa se reinicia lastTs)
+    var dt = lastTs === null ? 0 : Math.min(ts - lastTs, 1000);
+    lastTs = ts;
+    var any = false;
+    autoplays.forEach(function (a) {
+      if (!a.running()) return;
+      any = true;
+      a.t += dt;
+      if (a.t >= a.duration) {
+        a.t = 0;
+        a.next();
+      }
+      a.progress(Math.min(1, a.t / a.duration));
+    });
+    if (any) requestAnimationFrame(loop);
+    else { looping = false; lastTs = null; }
+  }
+  function wake() {
+    if (looping) return;
+    if (!autoplays.some(function (a) { return a.running(); })) return;
+    looping = true;
+    lastTs = null;
+    requestAnimationFrame(loop);
+  }
+  function updateAutoplayView() {
+    var vh = window.innerHeight;
+    autoplays.forEach(function (a) {
+      var r = a.root.getBoundingClientRect();
+      a.inView = r.bottom > vh * 0.15 && r.top < vh * 0.85 && r.height > 0;
+    });
+    wake();
+  }
+  document.addEventListener('visibilitychange', wake);
+
+  /* ---------------------------------------------------------
+     Puntos de carrusel (mobile)
+     --------------------------------------------------------- */
+  function makeDots(scroller, items, label, after) {
+    var wrap = document.createElement('div');
+    wrap.className = 'dots';
+    items.forEach(function (item, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', label + ' ' + (i + 1) + ' de ' + items.length);
+      b.addEventListener('click', function () {
+        scroller.scrollTo({ left: item.offsetLeft - items[0].offsetLeft, behavior: reduceMotion ? 'auto' : 'smooth' });
+      });
+      wrap.appendChild(b);
+    });
+    after.insertAdjacentElement('afterend', wrap);
+
+    var pending = false;
+    function sync() {
+      pending = false;
+      var x = scroller.scrollLeft;
+      var best = 0;
+      var bestD = Infinity;
+      items.forEach(function (item, i) {
+        var d = Math.abs(item.offsetLeft - items[0].offsetLeft - x);
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      if (x + scroller.clientWidth >= scroller.scrollWidth - 4) best = items.length - 1;
+      toArray(wrap.children).forEach(function (b, i) {
+        b.classList.toggle('is-active', i === best);
+        if (i === best) b.setAttribute('aria-current', 'true');
+        else b.removeAttribute('aria-current');
+      });
+    }
+    scroller.addEventListener('scroll', function () {
+      if (!pending) { pending = true; requestAnimationFrame(sync); }
+    }, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
   }
 
   /* ---------------------------------------------------------
-     Aparición suave de bloques
+     Header: sombra al hacer scroll + sección activa con píldora
      --------------------------------------------------------- */
-  var pendingReveals = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
-  var revealTicking = false;
-  function revealInView() {
-    revealTicking = false;
-    var vh = window.innerHeight;
-    pendingReveals = pendingReveals.filter(function (el) {
-      var rect = el.getBoundingClientRect();
-      if (rect.top < vh * 0.92 && rect.bottom > 0) {
-        el.classList.add('is-visible');
-        return false;
-      }
-      return true;
+  var header = document.querySelector('.header');
+  var nav = document.querySelector('.header__nav');
+  var spyLinks = toArray(document.querySelectorAll('[data-spy]'));
+  var spySections = spyLinks.map(function (link) { return document.getElementById(link.getAttribute('data-spy')); });
+  var activeSpy = null;
+
+  function movePill() {
+    if (!nav) return;
+    if (!activeSpy || isMobile()) { nav.classList.remove('has-pill'); return; }
+    nav.style.setProperty('--pill-x', activeSpy.offsetLeft + 'px');
+    nav.style.setProperty('--pill-w', activeSpy.offsetWidth + 'px');
+    // sin animación la primera vez: aparece directamente sobre el enlace
+    nav.classList.add('has-pill');
+  }
+
+  function updateSpy() {
+    // la sección activa es la que empieza más cerca por encima de la línea
+    var line = window.innerHeight * 0.45;
+    var current = null;
+    var bestTop = -Infinity;
+    spySections.forEach(function (section, i) {
+      if (!section) return;
+      var top = section.getBoundingClientRect().top;
+      if (top <= line && top > bestTop) { bestTop = top; current = spyLinks[i]; }
     });
-    if (!pendingReveals.length) window.removeEventListener('scroll', onRevealScroll);
+    if (current === activeSpy) return;
+    activeSpy = current;
+    spyLinks.forEach(function (link) {
+      var on = link === current;
+      link.classList.toggle('is-active', on);
+      if (on) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+    movePill();
   }
-  function onRevealScroll() {
-    if (!revealTicking) { revealTicking = true; requestAnimationFrame(revealInView); }
-  }
-  if (reduceMotion) {
-    pendingReveals.forEach(function (el) { el.classList.add('is-visible'); });
-  } else {
-    revealInView();
-    window.addEventListener('scroll', onRevealScroll, { passive: true });
-    window.addEventListener('resize', onRevealScroll);
-  }
+  window.addEventListener('resize', movePill);
 
   /* ---------------------------------------------------------
      Menú móvil (con foco atrapado y retorno al botón)
@@ -114,12 +231,14 @@
   var openBtn = document.querySelector('[data-menu-open]');
   var closeBtn = document.querySelector('[data-menu-close]');
   var main = document.getElementById('main');
+  var menuOpen = false;
 
   function menuFocusables() {
     return menu.querySelectorAll('a[href], button');
   }
 
   function setMenu(open) {
+    menuOpen = open;
     menu.classList.toggle('is-open', open);
     menu.setAttribute('aria-hidden', open ? 'false' : 'true');
     openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -130,6 +249,7 @@
     } else {
       openBtn.focus({ preventScroll: true });
     }
+    updateSticky();
   }
   openBtn.addEventListener('click', function () { setMenu(true); });
   closeBtn.addEventListener('click', function () { setMenu(false); });
@@ -153,30 +273,51 @@
   });
 
   /* ---------------------------------------------------------
-     Tabs del panel (con navegación por teclado)
+     Panel: tabs con indicador deslizante, avance automático,
+     arrastre en desktop y sincronía con el swipe en mobile
      --------------------------------------------------------- */
-  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs__btn'));
+  var tabsEl = document.querySelector('.tabs');
+  var tabs = toArray(document.querySelectorAll('.tabs__btn'));
   var tabPanel = document.getElementById('dash-panel');
   var screensViewport = document.querySelector('.screens__viewport');
   var screensTrack = document.querySelector('.screens__track');
-  var slides = document.querySelectorAll('.screens__slide');
+  var slides = toArray(document.querySelectorAll('.screens__slide'));
   var activeTab = 0;
+  var currentShift = 0;
+  var syncLockUntil = 0;
+
+  function moveIndicator() {
+    var t = tabs[activeTab];
+    tabsEl.style.setProperty('--ind-x', t.offsetLeft + 'px');
+    tabsEl.style.setProperty('--ind-w', t.offsetWidth + 'px');
+    tabsEl.classList.add('has-indicator');
+  }
+
+  function revealTab(t, smooth) {
+    // mantiene visible la pestaña activa en la tira desplazable (mobile) sin mover la página
+    if (tabsEl.scrollWidth <= tabsEl.clientWidth) return;
+    var left = t.offsetLeft - (tabsEl.clientWidth - t.offsetWidth) / 2;
+    tabsEl.scrollTo({ left: Math.max(0, left), behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
+  }
 
   function showSlide(i, smooth) {
     var slide = slides[i];
     if (!slide) return;
+    slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
     var offset = slide.offsetLeft - slides[0].offsetLeft;
     if (isMobile()) {
       screensTrack.style.transform = '';
+      syncLockUntil = performance.now() + (smooth ? 800 : 100);
       screensViewport.scrollTo({ left: offset, behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
     } else {
       var maxShift = screensTrack.scrollWidth - screensViewport.clientWidth;
-      var shift = Math.min(offset, Math.max(0, maxShift));
-      screensTrack.style.transform = 'translateX(' + -shift + 'px)';
+      currentShift = Math.min(offset, Math.max(0, maxShift));
+      screensTrack.style.transform = 'translateX(' + -currentShift + 'px)';
     }
   }
 
-  function selectTab(i, focus) {
+  function selectTab(i, opts) {
+    opts = opts || {};
     tabs.forEach(function (t, k) {
       var on = k === i;
       t.classList.toggle('is-active', on);
@@ -185,40 +326,151 @@
     });
     tabPanel.setAttribute('aria-labelledby', tabs[i].id);
     activeTab = i;
-    showSlide(i, true);
-    if (focus) {
-      tabs[i].focus();
-      tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    }
+    moveIndicator();
+    revealTab(tabs[i], true);
+    if (opts.fromScroll) slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
+    else showSlide(i, true);
+    if (opts.focus) tabs[i].focus();
+    if (opts.user) dashAuto.stop();
+    dashAuto.reset();
   }
 
+  var dashAuto = createAutoplay({
+    root: document.querySelector('.dashboard'),
+    hoverEls: [tabsEl],
+    duration: 5000,
+    next: function () { selectTab((activeTab + 1) % tabs.length); },
+    onProgress: function (p) { tabsEl.style.setProperty('--p', p.toFixed(4)); },
+    onStop: function () { tabsEl.style.setProperty('--p', 0); }
+  });
+
   tabs.forEach(function (tab, i) {
-    tab.addEventListener('click', function () { selectTab(i, false); });
+    tab.addEventListener('click', function () { selectTab(i, { user: true }); });
     tab.addEventListener('keydown', function (e) {
       var next = null;
       if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
       else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
       else if (e.key === 'Home') next = 0;
       else if (e.key === 'End') next = tabs.length - 1;
-      if (next !== null) { e.preventDefault(); selectTab(next, true); }
+      if (next !== null) { e.preventDefault(); selectTab(next, { focus: true, user: true }); }
     });
   });
-  window.addEventListener('resize', function () { showSlide(activeTab, false); });
+
+  tabPanel.classList.add('is-enhanced');
+  slides.forEach(function (slide, i) {
+    slide.addEventListener('click', function () {
+      if (dragMoved || i === activeTab || isMobile()) return;
+      selectTab(i, { user: true });
+    });
+  });
+
+  // Arrastre con el mouse en desktop
+  var drag = null;
+  var dragMoved = false;
+  screensViewport.addEventListener('pointerdown', function (e) {
+    if (isMobile() || e.pointerType !== 'mouse' || e.button !== 0) return;
+    drag = { x: e.clientX };
+    dragMoved = false;
+  });
+  window.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 5) {
+      dragMoved = true;
+      tabPanel.classList.add('is-dragging');
+      screensTrack.style.transition = 'none';
+      screensTrack.style.transform = 'translateX(' + (-currentShift + dx * 0.6) + 'px)';
+    }
+  });
+  window.addEventListener('pointerup', function (e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.x;
+    drag = null;
+    tabPanel.classList.remove('is-dragging');
+    screensTrack.style.transition = '';
+    if (Math.abs(dx) > 60) {
+      var next = Math.min(tabs.length - 1, Math.max(0, activeTab + (dx < 0 ? 1 : -1)));
+      selectTab(next, { user: true });
+    } else {
+      showSlide(activeTab, true);
+    }
+  });
+
+  // Swipe en mobile: la pestaña sigue a la captura visible
+  var swipePending = false;
+  screensViewport.addEventListener('scroll', function () {
+    if (swipePending || !isMobile()) return;
+    swipePending = true;
+    requestAnimationFrame(function () {
+      swipePending = false;
+      if (performance.now() < syncLockUntil) return;
+      var x = screensViewport.scrollLeft;
+      var best = 0;
+      var bestD = Infinity;
+      slides.forEach(function (s, k) {
+        var d = Math.abs(s.offsetLeft - slides[0].offsetLeft - x);
+        if (d < bestD) { bestD = d; best = k; }
+      });
+      if (best !== activeTab) selectTab(best, { fromScroll: true });
+    });
+  }, { passive: true });
+  ['touchstart', 'wheel'].forEach(function (type) {
+    screensViewport.addEventListener(type, function () { dashAuto.stop(); }, { passive: true });
+  });
+  tabsEl.addEventListener('scroll', function () {
+    tabsEl.classList.toggle('is-end', tabsEl.scrollLeft + tabsEl.clientWidth >= tabsEl.scrollWidth - 2);
+  }, { passive: true });
+
+  window.addEventListener('resize', function () {
+    moveIndicator();
+    showSlide(activeTab, false);
+  });
+  moveIndicator();
+  showSlide(0, false);
+  dashAuto.reset();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveIndicator(); movePill(); });
 
   /* ---------------------------------------------------------
-     Productos
+     Productos: avance automático (desktop) y puntos (mobile)
      --------------------------------------------------------- */
-  var products = document.querySelectorAll('.product');
-  function activateProduct(p) {
-    products.forEach(function (o) { o.classList.remove('is-active'); });
-    p.classList.add('is-active');
+  var productsList = document.querySelector('.products__list');
+  var products = toArray(document.querySelectorAll('.product'));
+  var devices = document.querySelector('.products__devices');
+  var activeProduct = 0;
+
+  function activateProduct(i, user) {
+    products.forEach(function (o, k) {
+      o.classList.toggle('is-active', k === i);
+      if (k !== i) o.style.setProperty('--p', 0);
+    });
+    if (i !== activeProduct && devices) {
+      devices.style.setProperty('--glow', products[i].style.getPropertyValue('--pc').trim());
+      restartClass(devices, 'is-swapping');
+    }
+    activeProduct = i;
+    if (user) productAuto.stop();
+    productAuto.reset();
   }
-  products.forEach(function (p) {
-    p.addEventListener('click', function () { activateProduct(p); });
+
+  var productAuto = createAutoplay({
+    root: document.querySelector('.products__row'),
+    hoverEls: [productsList],
+    duration: 5000,
+    when: function () { return !isMobile(); },
+    next: function () { activateProduct((activeProduct + 1) % products.length); },
+    onProgress: function (p) { products[activeProduct].style.setProperty('--p', p.toFixed(4)); },
+    onStart: function () { productsList.classList.add('is-autoplay'); },
+    onStop: function () { productsList.classList.remove('is-autoplay'); }
+  });
+
+  products.forEach(function (p, i) {
+    p.addEventListener('click', function () { activateProduct(i, true); });
     p.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateProduct(p); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateProduct(i, true); }
     });
   });
+  productAuto.reset();
+  makeDots(productsList, products, 'Producto', productsList);
 
   /* ---------------------------------------------------------
      Proveedores: "Ver más" + carrusel infinito
@@ -237,7 +489,7 @@
   var providers = document.querySelector('.providers');
   var providersTrack = document.querySelector('.providers__track');
   if (providers && providersTrack && !reduceMotion) {
-    Array.prototype.slice.call(providersTrack.children).forEach(function (item) {
+    toArray(providersTrack.children).forEach(function (item) {
       var clone = item.cloneNode(true);
       clone.setAttribute('aria-hidden', 'true');
       clone.querySelectorAll('img').forEach(function (img) { img.alt = ''; });
@@ -247,7 +499,7 @@
   }
 
   /* ---------------------------------------------------------
-     Comisiones: etapas + gauge animado
+     Comisiones: etapas + gauge animado + avance automático
      --------------------------------------------------------- */
   var STAGES = [
     { name: 'Primera etapa', pct: 20 },
@@ -257,8 +509,10 @@
     { name: 'Quinta etapa', pct: 40 },
     { name: 'Sexta etapa', pct: 50 }
   ];
+  var chart = document.querySelector('.chart');
   var tiers = document.querySelectorAll('.tier');
   var dots = document.querySelectorAll('.stage-card__dots i');
+  var stageCard = document.querySelector('.stage-card');
   var stageTitle = document.querySelector('[data-stage-title]');
   var stageValue = document.querySelector('[data-stage-value]');
   var gaugeValue = document.querySelector('[data-gauge-value]');
@@ -268,6 +522,7 @@
   var currentStage = 0;
   var gaugePct = 0;
   var gaugeAnim = null;
+  var chartShown = reduceMotion;
 
   // Semicírculo: centro (111.5, 111.5), radio exterior 111.5, grosor 44.91
   var CX = 111.5, CY = 111.5, R = 111.5, r = 111.5 - 44.9086;
@@ -288,7 +543,7 @@
 
   function renderGauge(pct) {
     var end = 180 - 180 * (pct / 100);
-    gaugeFill.setAttribute('d', arcPath(180, end));
+    gaugeFill.setAttribute('d', pct > 0.05 ? arcPath(180, end) : '');
     var m1 = pt(60, end), m2 = pt(118.4, end);
     gaugeMarker.setAttribute('x1', f(m1[0]));
     gaugeMarker.setAttribute('y1', f(m1[1]));
@@ -297,12 +552,12 @@
     gaugeValue.textContent = Math.round(pct) + '%';
   }
 
-  function animateGauge(to) {
+  function animateGauge(to, duration) {
     if (gaugeAnim) cancelAnimationFrame(gaugeAnim);
     if (reduceMotion) { gaugePct = to; renderGauge(to); return; }
     var from = gaugePct;
     var start = null;
-    var duration = 500;
+    duration = duration || 600;
     function step(ts) {
       if (start === null) start = ts;
       var t = Math.min(1, (ts - start) / duration);
@@ -314,7 +569,8 @@
     gaugeAnim = requestAnimationFrame(step);
   }
 
-  function setStage(i, animate) {
+  function setStage(i, opts) {
+    opts = opts || {};
     currentStage = (i + STAGES.length) % STAGES.length;
     var s = STAGES[currentStage];
     tiers.forEach(function (t, k) {
@@ -325,17 +581,58 @@
     dots.forEach(function (d, k) { d.classList.toggle('is-active', k === currentStage); });
     stageTitle.textContent = s.name;
     stageValue.textContent = s.pct + '%';
-    if (animate) animateGauge(s.pct);
-    else { gaugePct = s.pct; renderGauge(s.pct); }
+    if (opts.animate) {
+      restartClass(stageCard, 'is-changing');
+      animateGauge(s.pct);
+    } else if (chartShown) {
+      gaugePct = s.pct;
+      renderGauge(s.pct);
+    }
+    if (opts.user) {
+      // a partir de aquí los cambios los pide el usuario: se anuncian
+      stageCard.setAttribute('aria-live', 'polite');
+      stageAuto.stop();
+    }
+    stageAuto.reset();
   }
+
+  var stageAuto = createAutoplay({
+    root: chart,
+    hoverEls: [stageCard, document.querySelector('.gauge')],
+    duration: 3500,
+    when: function () { return chartShown && window.innerWidth > 1199; },
+    next: function () { setStage(currentStage + 1, { animate: true }); },
+    onProgress: function (p) { stageCard.style.setProperty('--p', p.toFixed(4)); },
+    onStart: function () { stageCard.classList.add('is-autoplay'); },
+    onStop: function () {
+      stageCard.classList.remove('is-autoplay');
+      stageCard.style.removeProperty('--p');
+    }
+  });
 
   gaugeTrack.setAttribute('d', arcPath(180, 0));
   tiers.forEach(function (t, i) {
-    t.addEventListener('click', function () { setStage(i, true); });
+    t.addEventListener('click', function () { setStage(i, { animate: true, user: true }); });
   });
-  document.querySelector('[data-tier-prev]').addEventListener('click', function () { setStage(currentStage - 1, true); });
-  document.querySelector('[data-tier-next]').addEventListener('click', function () { setStage(currentStage + 1, true); });
-  setStage(0, false);
+  document.querySelector('[data-tier-prev]').addEventListener('click', function () { setStage(currentStage - 1, { animate: true, user: true }); });
+  document.querySelector('[data-tier-next]').addEventListener('click', function () { setStage(currentStage + 1, { animate: true, user: true }); });
+
+  // El gauge arranca vacío y se llena cuando el gráfico entra en pantalla
+  function onChartShown() {
+    if (chartShown) return;
+    chartShown = true;
+    setTimeout(function () {
+      animateGauge(STAGES[currentStage].pct, 1100);
+      stageAuto.reset();
+    }, 1200);
+  }
+  if (chartShown) setStage(0);
+  else {
+    renderGauge(0);
+    setStage(0);
+    chart.addEventListener('inview', onChartShown);
+    if (chart.classList.contains('is-inview')) onChartShown();
+  }
 
   /* ---------------------------------------------------------
      Acordeones: pasos de influencer, FAQ y footer móvil
@@ -345,15 +642,53 @@
     head.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
-  var steps = document.querySelectorAll('.step');
-  steps.forEach(function (step) {
+  var steps = toArray(document.querySelectorAll('.step'));
+  var stepsImage = document.querySelector('.steps__image');
+  var stepsBadge = document.querySelector('.steps__badge');
+  var badgeNum = document.querySelector('[data-step-num]');
+  var badgeTitle = document.querySelector('[data-step-title]');
+  var activeStep = 0;
+
+  function openStep(i, user) {
+    steps.forEach(function (o, k) {
+      setOpen(o, o.querySelector('.step__head'), k === i);
+      if (k !== i) o.style.removeProperty('--p');
+    });
+    badgeNum.textContent = ('0' + (i + 1)).slice(-2);
+    badgeTitle.textContent = steps[i].querySelector('.step__title').textContent;
+    if (i !== activeStep && !isMobile()) {
+      restartClass(stepsBadge, 'is-changing');
+      restartClass(stepsImage, 'is-changing');
+    }
+    activeStep = i;
+    if (user) stepAuto.stop();
+    stepAuto.reset();
+  }
+
+  var stepAuto = createAutoplay({
+    root: document.querySelector('.steps'),
+    hoverEls: [document.querySelector('.steps__list')],
+    duration: 5000,
+    when: function () { return !isMobile(); },
+    next: function () { openStep((activeStep + 1) % steps.length); },
+    onProgress: function (p) { steps[activeStep].style.setProperty('--p', p.toFixed(4)); },
+    onStop: function () { steps.forEach(function (s) { s.style.removeProperty('--p'); }); }
+  });
+
+  stepAuto.reset();
+
+  steps.forEach(function (step, i) {
     var head = step.querySelector('.step__head');
     head.addEventListener('click', function () {
       var wasOpen = step.classList.contains('is-open');
-      // En desktop siempre queda un paso abierto
-      if (wasOpen && !isMobile()) return;
-      steps.forEach(function (o) { setOpen(o, o.querySelector('.step__head'), false); });
-      if (!wasOpen) setOpen(step, head, true);
+      if (wasOpen && !isMobile()) { stepAuto.stop(); return; }
+      if (wasOpen) {
+        // en mobile se puede cerrar el paso abierto
+        setOpen(step, head, false);
+        stepAuto.stop();
+        return;
+      }
+      openStep(i, true);
     });
   });
 
@@ -376,19 +711,42 @@
   });
 
   /* ---------------------------------------------------------
+     Testimonios: columnas infinitas (desktop) y puntos (mobile)
+     --------------------------------------------------------- */
+  var tGrid = document.querySelector('.testimonials__grid');
+  var tItems = toArray(tGrid.querySelectorAll('.testimonial, .testimonial-video'));
+  if (!reduceMotion) {
+    tGrid.querySelectorAll('.testimonials__track').forEach(function (track) {
+      toArray(track.children).forEach(function (item) {
+        var clone = item.cloneNode(true);
+        clone.setAttribute('data-clone', '');
+        clone.setAttribute('aria-hidden', 'true');
+        if (clone.matches('button')) clone.tabIndex = -1;
+        clone.querySelectorAll('a, button').forEach(function (el) { el.tabIndex = -1; });
+        track.appendChild(clone);
+      });
+    });
+    tGrid.classList.add('is-marquee');
+  }
+  makeDots(tGrid, tItems, 'Testimonio', tGrid);
+
+  /* ---------------------------------------------------------
      Video testimonial (solo si hay URL configurada)
      --------------------------------------------------------- */
   var videoBtn = document.querySelector('.testimonial-video');
-  if (videoBtn) {
-    var videoUrl = videoBtn.getAttribute('data-video') || CONFIG.testimonialVideo;
-    if (videoUrl) {
-      videoBtn.setAttribute('data-video', videoUrl);
-      videoBtn.addEventListener('click', function () { openVideo(videoUrl, videoBtn); });
-    } else {
-      videoBtn.setAttribute('aria-disabled', 'true');
-      videoBtn.setAttribute('aria-label', 'Video testimonial (próximamente)');
+  var videoUrl = videoBtn ? videoBtn.getAttribute('data-video') || CONFIG.testimonialVideo : '';
+  tGrid.querySelectorAll('.testimonial-video').forEach(function (btn) {
+    if (videoUrl) btn.setAttribute('data-video', videoUrl);
+    else if (!btn.hasAttribute('data-clone')) {
+      btn.setAttribute('aria-disabled', 'true');
+      btn.setAttribute('aria-label', 'Video testimonial (próximamente)');
     }
-  }
+  });
+  // delegado: también responden las copias del carrusel
+  tGrid.addEventListener('click', function (e) {
+    var btn = e.target.closest('.testimonial-video');
+    if (btn && videoUrl) openVideo(videoUrl, videoBtn);
+  });
 
   function openVideo(url, opener) {
     var modal = document.createElement('div');
@@ -415,9 +773,45 @@
   }
 
   /* ---------------------------------------------------------
+     Botón fijo de registro (mobile): visible entre el hero y el formulario
+     --------------------------------------------------------- */
+  var sticky = document.querySelector('.sticky-cta');
+  var heroBtn = document.querySelector('.hero__btn');
+  var contact = document.getElementById('contacto');
+
+  function updateSticky() {
+    if (!sticky) return;
+    var vh = window.innerHeight;
+    var show = isMobile() && !menuOpen &&
+      heroBtn.getBoundingClientRect().bottom < 0 &&
+      contact.getBoundingClientRect().top > vh * 0.9;
+    sticky.classList.toggle('is-shown', show);
+  }
+
+  /* ---------------------------------------------------------
+     Scroll: un solo cuadro por frame para header, scrollspy,
+     sliders automáticos y botón fijo
+     --------------------------------------------------------- */
+  var scrollPending = false;
+  function onScrollFrame() {
+    scrollPending = false;
+    header.classList.toggle('is-scrolled', window.scrollY > 8);
+    updateSpy();
+    updateAutoplayView();
+    updateSticky();
+  }
+  function requestScrollFrame() {
+    if (!scrollPending) { scrollPending = true; requestAnimationFrame(onScrollFrame); }
+  }
+  window.addEventListener('scroll', requestScrollFrame, { passive: true });
+  window.addEventListener('resize', requestScrollFrame);
+  onScrollFrame();
+
+  /* ---------------------------------------------------------
      Formulario de contacto
      --------------------------------------------------------- */
   var form = document.getElementById('lead-form');
+  var formCard = document.querySelector('.form-card');
   var success = document.querySelector('.form-success');
   var submitBtn = form.querySelector('.lead-form__submit');
   var submitText = form.querySelector('.lead-form__submit-text');
@@ -474,6 +868,27 @@
     });
   }
 
+  function confetti(container) {
+    if (reduceMotion) return;
+    var wrap = document.createElement('div');
+    var colors = ['#98df4b', '#41a353', '#2391ff', '#f6c52b', '#0c7ffa'];
+    wrap.className = 'confetti';
+    wrap.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < 40; i++) {
+      var piece = document.createElement('i');
+      var angle = Math.random() * Math.PI * 2;
+      var dist = 80 + Math.random() * 170;
+      piece.style.setProperty('--cx', (Math.cos(angle) * dist).toFixed(0) + 'px');
+      piece.style.setProperty('--cy', (Math.sin(angle) * dist * 0.8 + 70).toFixed(0) + 'px');
+      piece.style.setProperty('--cr', (Math.random() * 720 - 360).toFixed(0) + 'deg');
+      piece.style.setProperty('--cc', colors[i % colors.length]);
+      piece.style.animationDelay = (Math.random() * 0.15).toFixed(2) + 's';
+      wrap.appendChild(piece);
+    }
+    container.appendChild(wrap);
+    setTimeout(function () { wrap.remove(); }, 1900);
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     statusEl.textContent = '';
@@ -502,6 +917,7 @@
       form.hidden = true;
       success.hidden = false;
       success.querySelector('.form-success__title').focus();
+      confetti(formCard);
     }).catch(function () {
       statusEl.textContent = 'No pudimos enviar tus datos. Inténtalo nuevamente o escríbenos a afiliados@tinbet.pe.';
     }).then(function () {

@@ -1,0 +1,187 @@
+/* =========================================================
+   Afiliados Tinbet — Animaciones
+   Los estados iniciales (ocultos) solo aplican con la clase .js en <html>,
+   que agrega un script en línea del <head>. js/motion.js agrega las clases
+   que disparan cada animación (.is-visible, .is-split, .is-ready, .is-inview).
+   ========================================================= */
+
+/* ---------- Aparición de bloques al hacer scroll ---------- */
+@keyframes reveal-up { from { opacity: 0; translate: 0 28px; } }
+@keyframes fade-in { from { opacity: 0; } }
+
+.js [data-reveal]:not(.is-visible) { opacity: 0; }
+.js [data-reveal].is-visible { animation: reveal-up 0.9s var(--ease-out) var(--d, 0s) backwards; }
+
+/* Hijos escalonados: main.js no interviene, motion.js asigna --si a cada hijo */
+.js [data-stagger]:not(.is-visible) > * { opacity: 0; }
+.js [data-stagger].is-visible > * { animation: reveal-up 0.8s var(--ease-out) calc(var(--d, 0s) + var(--si, 0) * 90ms) backwards; }
+
+/* ---------- Títulos palabra por palabra ---------- */
+@keyframes word-up { from { translate: 0 108%; rotate: 5deg; } }
+
+.js [data-split]:not(.is-split) { opacity: 0; }
+/* cada palabra va en una "ventana" que recorta su entrada desde abajo */
+[data-split] .w { display: inline-block; vertical-align: top; overflow: hidden; padding-block: 0.12em; margin-block: -0.12em; }
+[data-split] .w__i { display: inline-block; transform-origin: 0 100%; }
+.js [data-split]:not(.is-visible) .w__i { translate: 0 108%; }
+.js [data-split].is-visible .w__i { animation: word-up 1s var(--ease-out) calc(var(--d, 0s) + var(--wi, 0) * 45ms) backwards; }
+
+/* ---------- Contadores ---------- */
+[data-count] { font-variant-numeric: tabular-nums; }
+
+/* ---------- Hero: entrada al cargar ---------- */
+@keyframes phone-in { from { opacity: 0; translate: 70px 50px; rotate: 5deg; } }
+@keyframes phone-in-m { from { opacity: 0; translate: 0 50px; } }
+@keyframes float { 50% { translate: 0 -14px; } }
+@keyframes tag-in { from { opacity: 0; scale: 0.4; } }
+@keyframes bob { 50% { translate: 0 -10px; } }
+@keyframes rise { from { translate: 0 48px; } }
+@keyframes breathe { 50% { scale: 1.08; } }
+
+.js .hero:not(.is-ready) :is(.hero__hand, .hero__hand-m, .hero__tag, .stats__edge, .stats__glass, .stats__content) { opacity: 0; }
+.js .hero.is-ready .hero__hand { animation: phone-in 1.3s var(--ease-out) 0.15s backwards, float 6s ease-in-out 1.45s infinite; }
+.js .hero.is-ready .hero__hand-m { animation: phone-in-m 1.1s var(--ease-out) 0.3s backwards, float 6s ease-in-out 1.4s infinite; }
+.js .hero.is-ready .hero__tag--rev { animation: tag-in 0.8s var(--ease-spring) 0.75s backwards, bob 5s ease-in-out 1.55s infinite; }
+.js .hero.is-ready .hero__tag--cpa { animation: tag-in 0.8s var(--ease-spring) 0.9s backwards, bob 6s ease-in-out 1.7s infinite; }
+.js .hero.is-ready .stats { animation: rise 1.1s var(--ease-out) 0.45s backwards; }
+/* la opacidad va en las capas internas: en el contenedor anularía el blur del vidrio */
+.js .hero.is-ready :is(.stats__edge, .stats__glass, .stats__content) { animation: fade-in 1s ease 0.45s backwards; }
+.glow--hero { animation: breathe 10s ease-in-out infinite; }
+
+/* ---------- Cinta de beneficios ---------- */
+@keyframes ticker { to { transform: translateX(calc(-1 * var(--group-w, 0px))); } }
+.ticker.is-running .ticker__track { animation: ticker var(--dur, 40s) linear infinite; }
+.ticker.is-running .ticker__band--back .ticker__track { animation-direction: reverse; }
+
+/* ---------- Productos: cambio de producto ---------- */
+@keyframes devices-swap { 35% { opacity: 0.55; scale: 0.97; } }
+.products__devices.is-swapping { animation: devices-swap 0.7s var(--ease-out); }
+
+/* ---------- Comisiones (desktop): ola, etapas y gauge entran en secuencia ---------- */
+@keyframes wave-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes tier-in { from { opacity: 0; translate: 0 32px; scale: 0.6; } }
+@keyframes pulse-ring { from { box-shadow: 0 0 0 0 rgba(152, 223, 75, 0.6); } to { box-shadow: 0 0 0 18px rgba(152, 223, 75, 0); } }
+
+.tier--1, .chart__label--1 { --ti: 0; }
+.tier--2, .chart__label--2 { --ti: 1; }
+.tier--3, .chart__label--3 { --ti: 2; }
+.tier--4, .chart__label--4 { --ti: 3; }
+.tier--5, .chart__label--5 { --ti: 4; }
+.tier--6, .chart__label--6 { --ti: 5; }
+
+.js .chart:not(.is-inview) .chart__wave { clip-path: inset(0 100% 0 0); }
+.js .chart:not(.is-inview) :is(.tier, .chart__label, .stage-card, .gauge) { opacity: 0; }
+.js .chart.is-inview .chart__wave { animation: wave-in 1.8s var(--ease-out) backwards; }
+.js .chart.is-inview .tier { animation: tier-in 0.7s var(--ease-spring) calc(0.35s + var(--ti) * 0.16s) backwards; }
+.js .chart.is-inview .chart__label { animation: reveal-up 0.7s var(--ease-out) calc(0.5s + var(--ti) * 0.16s) backwards; }
+.js .chart.is-inview :is(.stage-card, .gauge) { animation: reveal-up 0.9s var(--ease-out) 1.2s backwards; }
+.tier.is-active .tier__dot { animation: pulse-ring 1.8s ease-out infinite; }
+
+@keyframes swap-in { from { opacity: 0; translate: 0 10px; } }
+.stage-card.is-changing :is(.stage-card__title, .stage-card__value) { animation: swap-in 0.45s var(--ease-out); }
+
+/* Barras (tablet / mobile): se llenan de izquierda a derecha */
+@keyframes bar-grow { from { transform: scaleX(0); } }
+.bar:nth-child(1) { --bi: 0; }
+.bar:nth-child(2) { --bi: 1; }
+.bar:nth-child(3) { --bi: 2; }
+.bar:nth-child(4) { --bi: 3; }
+.bar:nth-child(5) { --bi: 4; }
+.bar:nth-child(6) { --bi: 5; }
+.js .bars:not(.is-inview) .bar { opacity: 0; }
+.js .bars:not(.is-inview) .bar::before { transform: scaleX(0); }
+.js .bars.is-inview .bar { animation: reveal-up 0.6s var(--ease-out) calc(var(--bi) * 0.1s) backwards; }
+.js .bars.is-inview .bar::before { animation: bar-grow 1.2s var(--ease-out) calc(0.15s + var(--bi) * 0.1s) backwards; }
+
+/* ---------- Pasos de influencer ---------- */
+@keyframes ken-burns { from { scale: 1.1; } }
+.steps__image.is-changing img { animation: ken-burns 1.4s var(--ease-out); }
+.steps__badge.is-changing :is(.steps__badge-count, .steps__badge-title) { animation: swap-in 0.5s var(--ease-out); }
+
+/* ---------- FAQ ---------- */
+.faq-item { transition: box-shadow 0.3s ease; }
+.faq-item:hover { box-shadow: 0 0 0 2px rgba(152, 223, 75, 0.55); }
+.faq-item__icon { transition: rotate 0.4s var(--ease-out); }
+.faq-item.is-open .faq-item__icon { rotate: 180deg; }
+
+/* ---------- Video testimonial: onda alrededor del play ---------- */
+@keyframes play-ring { from { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); } to { box-shadow: 0 0 0 22px rgba(255, 255, 255, 0); } }
+.testimonial-video__play { animation: play-ring 2.2s ease-out infinite; }
+
+/* ---------- Formulario ---------- */
+@keyframes spin-angle { to { --angle: 360deg; } }
+.form-glow { animation: spin-angle 9s linear infinite; }
+@keyframes pop { from { opacity: 0; scale: 0.4; } }
+.form-success:not([hidden]) > img { animation: pop 0.7s var(--ease-spring) backwards; }
+.form-success:not([hidden]) .form-success__text { animation: reveal-up 0.7s var(--ease-out) 0.2s backwards; }
+
+/* Confeti al enviar (lo genera main.js) */
+@keyframes confetti {
+  to { translate: var(--cx) var(--cy); rotate: var(--cr); opacity: 0; }
+}
+.confetti { position: absolute; left: 50%; top: 32%; z-index: 2; pointer-events: none; }
+.confetti i {
+  position: absolute; left: 0; top: 0; width: 8px; height: 12px; border-radius: 2px; background: var(--cc);
+  animation: confetti 1.4s cubic-bezier(0.16, 0.8, 0.4, 1) forwards;
+}
+
+/* ---------- CTA final: piezas flotando ---------- */
+@keyframes drift-a { 50% { translate: 0 -18px; rotate: -3deg; } }
+@keyframes drift-b { 50% { translate: 0 -14px; rotate: 2deg; } }
+@keyframes drift-y { 50% { translate: 0 -12px; } }
+.cta__piece--astro { animation: drift-a 7s ease-in-out infinite; }
+.cta__piece--coins { animation: drift-b 5.5s ease-in-out -1.5s infinite; }
+.cta__m-piece--astro { animation: drift-y 7s ease-in-out infinite; }
+.cta__m-piece--coins { animation: drift-y 5.5s ease-in-out -1.5s infinite; }
+
+/* ---------- WhatsApp: entrada y pulso ---------- */
+@keyframes wa-pulse { from { scale: 1; opacity: 0.5; } to { scale: 1.6; opacity: 0; } }
+.whatsapp { isolation: isolate; }
+.whatsapp::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: inherit; animation: wa-pulse 2.8s ease-out infinite; }
+.js .whatsapp { animation: pop 0.6s var(--ease-spring) 1.4s backwards; }
+
+/* ---------- Footer ---------- */
+.footer__links a {
+  width: fit-content;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: color 0.2s ease, background-size 0.3s var(--ease-out);
+}
+.footer__links a:hover { background-size: 100% 1px; }
+.footer__icons a { transition: background-color 0.2s ease, border-color 0.2s ease, translate 0.3s var(--ease-out); }
+.footer__icons a:hover { border-color: var(--lime); translate: 0 -3px; }
+
+/* ---------- Foco de luz que sigue al cursor en tarjetas ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .has-spot::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(152, 223, 75, 0.12), transparent 65%);
+    transition: opacity 0.35s ease;
+  }
+  .has-spot:hover::after { opacity: 1; }
+  .testimonial.has-spot,
+  .channel.has-spot { position: relative; }
+}
+
+/* =========================================================
+   Movimiento reducido: todo visible y quieto
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important; transition-delay: 0s !important;
+  }
+  .js [data-reveal],
+  .js [data-stagger] > *,
+  .js [data-split],
+  .js .hero :is(.hero__hand, .hero__hand-m, .hero__tag, .stats__edge, .stats__glass, .stats__content),
+  .js .chart :is(.tier, .chart__label, .stage-card, .gauge),
+  .js .bars .bar { opacity: 1 !important; }
+  .js [data-split] .w__i { translate: none !important; }
+  .js .chart .chart__wave { clip-path: none !important; }
+  .js .bars .bar::before { transform: none !important; }
+  .providers.is-marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .providers.is-marquee .providers__track,
+  .testimonials__grid.is-marquee .testimonials__track { animation: none; }
+  .form-glow, .whatsapp::before, .testimonial-video__play { animation: none; }
+}
