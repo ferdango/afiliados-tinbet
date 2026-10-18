@@ -434,9 +434,9 @@
           <a class="btn btn--lg influencer__btn" href="#contacto" data-reveal style="--d:.4s">Conviértete en embajador <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24"></a>
         </div>
       </div>
-      <div class="steps" id="como-ganar">
+      <div class="container steps" id="como-ganar">
         <ol class="steps__list" data-stagger>
-          <li class="step is-open">
+          <li class="step is-open" data-media="0">
             <button class="step__head" type="button" aria-expanded="true" aria-controls="step-1">
               <span class="step__num" aria-hidden="true">01</span>
               <span class="step__title">Regístrate</span>
@@ -450,7 +450,7 @@
             </div>
             <span class="step__bar" aria-hidden="true"><span class="step__fill"></span></span>
           </li>
-          <li class="step">
+          <li class="step" data-media="1">
             <button class="step__head" type="button" aria-expanded="false" aria-controls="step-2">
               <span class="step__num" aria-hidden="true">02</span>
               <span class="step__title">Conviértete en partner</span>
@@ -459,12 +459,12 @@
             <div class="step__body" id="step-2">
               <div class="step__inner">
                 <p class="step__text">Activa tu cuenta de afiliado y accede a tus enlaces de seguimiento, materiales promocionales y a tu panel de estadísticas.</p>
-                <picture><source srcset="assets/img/influencer-sports.avif" type="image/avif"><img class="step__media" src="assets/img/influencer-sports.jpg" alt="" width="1000" height="773" loading="lazy"></picture>
+                <picture><img class="step__media" src="assets/img/influencer.jpg" alt="Apretón de manos entre dos socios comerciales" width="1544" height="1029" loading="lazy"></picture>
               </div>
             </div>
             <span class="step__bar" aria-hidden="true"><span class="step__fill"></span></span>
           </li>
-          <li class="step">
+          <li class="step" data-media="0">
             <button class="step__head" type="button" aria-expanded="false" aria-controls="step-3">
               <span class="step__num" aria-hidden="true">03</span>
               <span class="step__title">Crea contenido</span>
@@ -478,7 +478,7 @@
             </div>
             <span class="step__bar" aria-hidden="true"><span class="step__fill"></span></span>
           </li>
-          <li class="step">
+          <li class="step" data-media="1">
             <button class="step__head" type="button" aria-expanded="false" aria-controls="step-4">
               <span class="step__num" aria-hidden="true">04</span>
               <span class="step__title">Recibe pagos</span>
@@ -487,14 +487,15 @@
             <div class="step__body" id="step-4">
               <div class="step__inner">
                 <p class="step__text">Cobra tus comisiones cada mes según el modelo que elegiste: RevShare o CPA.</p>
-                <picture><source srcset="assets/img/influencer-sports.avif" type="image/avif"><img class="step__media" src="assets/img/influencer-sports.jpg" alt="" width="1000" height="773" loading="lazy"></picture>
+                <picture><img class="step__media" src="assets/img/influencer.jpg" alt="" width="1544" height="1029" loading="lazy"></picture>
               </div>
             </div>
             <span class="step__bar" aria-hidden="true"><span class="step__fill"></span></span>
           </li>
         </ol>
         <div class="steps__image" data-reveal>
-          <picture><img src="assets/img/influencer.jpg" alt="Apretón de manos entre dos socios comerciales" width="1544" height="1029" loading="lazy" data-parallax="0.08"></picture>
+          <picture><source srcset="assets/img/influencer-sports.avif" type="image/avif"><img class="steps__img is-shown" data-media="0" src="assets/img/influencer-sports.jpg" alt="Deportistas con la camiseta de Tinbet" width="1000" height="773" loading="lazy" data-parallax="0.06"></picture>
+          <picture><img class="steps__img" data-media="1" src="assets/img/influencer.jpg" alt="Apretón de manos entre dos socios comerciales" width="1544" height="1029" loading="lazy" data-parallax="0.06"></picture>
           <div class="steps__badge" aria-hidden="true">
             <span class="steps__badge-count"><b data-step-num>01</b> / 04</span>
             <span class="steps__badge-title" data-step-title>Regístrate</span>

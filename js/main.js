@@ -833,7 +833,14 @@
   var stepsBadge = document.querySelector('.steps__badge');
   var badgeNum = document.querySelector('[data-step-num]');
   var badgeTitle = document.querySelector('[data-step-title]');
+  var stepImgs = toArray(document.querySelectorAll('.steps__img'));
   var activeStep = 0;
+
+  // cada paso indica en data-media qué foto le corresponde
+  function showStepImage(i) {
+    var media = steps[i].getAttribute('data-media');
+    stepImgs.forEach(function (img) { img.classList.toggle('is-shown', img.getAttribute('data-media') === media); });
+  }
 
   function openStep(i, user) {
     steps.forEach(function (o, k) {
@@ -842,6 +849,7 @@
     });
     badgeNum.textContent = ('0' + (i + 1)).slice(-2);
     badgeTitle.textContent = steps[i].querySelector('.step__title').textContent;
+    showStepImage(i);
     if (i !== activeStep && !isMobile()) {
       restartClass(stepsBadge, 'is-changing');
       restartClass(stepsImage, 'is-changing');

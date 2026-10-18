@@ -99,7 +99,7 @@
 
 /* ---------- Pasos de influencer ---------- */
 @keyframes ken-burns { from { scale: 1.1; } }
-.steps__image.is-changing img { animation: ken-burns 1.4s var(--ease-out); }
+.steps__image.is-changing .steps__img.is-shown { animation: ken-burns 1.4s var(--ease-out); }
 .steps__badge.is-changing :is(.steps__badge-count, .steps__badge-title) { animation: swap-in 0.5s var(--ease-out); }
 
 /* ---------- FAQ ---------- */

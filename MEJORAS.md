@@ -138,6 +138,10 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
   - Ahora el título es "Tu manager, desde el primer día", el formulario "Regístrate gratis" (con un subtítulo) y el botón "Quiero ser afiliado". Los canales van bajo "¿Prefieres escribirnos?".
   - Se quitó el hueco vacío que quedaba entre los beneficios y los canales.
   - En mobile, el formulario aparece antes que los canales de contacto.
+- **Pasos de influencer:**
+  - La foto del apretón de manos iba de borde a borde con 860 px de alto y se veía ampliada y recortada. Ahora es una tarjeta 4:3 con bordes redondeados dentro del ancho del contenido; la sección pasa de unos 1240 a 870 px de alto.
+  - La foto cambia con el paso: deportistas en los pasos 1 y 3, apretón de manos en el 2 y el 4.
+  - En mobile, la foto del paso abierto es una tarjeta redondeada en lugar de una franja de 380 px de alto.
 - **Ritmo vertical:** espaciado parejo entre secciones (≈140 px en desktop, ≈96 px en mobile). Antes variaba entre 59 y 219 px.
 
 ## Pendiente: requiere datos del negocio

@@ -634,11 +634,10 @@ ul, ol { list-style: none; }
 .influencer__text { margin-top: 12px; font-size: 16px; line-height: 24px; }
 .influencer__btn { margin-top: 24px; }
 
-.steps { display: grid; grid-template-columns: 48.41% 51.59%; margin-top: 87px; min-height: 860px; }
-.steps__list {
-  display: flex; flex-direction: column; justify-content: center; gap: 32px;
-  padding: 80px 48px 80px max(24px, calc(50% / 0.4841 - 636px));
-}
+/* Pasos a la izquierda y foto en tarjeta 4:3 a la derecha, dentro del ancho del contenido
+   (antes la foto iba de borde a borde con 860px de alto y se veía ampliada y recortada) */
+.steps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: 72px; margin-top: 64px; }
+.steps__list { display: flex; flex-direction: column; gap: 28px; }
 .step { position: relative; padding-left: 28px; }
 /* línea de avance del paso */
 .step__bar { position: absolute; left: 0; top: 6px; bottom: 6px; width: 2px; border-radius: 2px; background: rgba(219, 229, 224, 0.14); overflow: hidden; }
@@ -647,7 +646,7 @@ ul, ol { list-style: none; }
 .step__head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; width: 100%; text-align: left; }
 .step__num { flex: none; font: 600 15px/1 var(--font-body); letter-spacing: 0.04em; color: var(--lime); opacity: 0.5; transition: opacity 0.25s ease; }
 .step.is-open .step__num { opacity: 1; }
-.step__title { flex: 1; font: 700 36px/44px var(--font-head); color: rgba(219, 229, 224, 0.64); transition: color 0.25s ease; }
+.step__title { flex: 1; font: 700 32px/40px var(--font-head); color: rgba(219, 229, 224, 0.64); transition: color 0.25s ease; }
 .step__head:hover .step__title,
 .step.is-open .step__title { color: #fff; }
 .step__icon { display: none; }
@@ -658,11 +657,21 @@ ul, ol { list-style: none; }
 .step.is-open .step__title { padding: 3px 0; }
 .step__text { margin-top: 8px; padding: 3px 0; font: 400 16px/24px var(--font-body); color: #fff; max-width: 440px; }
 .step__media { display: none; }
-.steps__image { position: relative; min-height: 860px; overflow: hidden; }
-/* 60px extra arriba y abajo para el parallax */
-.steps__image img { position: absolute; left: 0; top: -60px; width: 100%; height: calc(100% + 120px); object-fit: cover; }
+.steps__image {
+  position: relative; aspect-ratio: 4 / 3; overflow: hidden; isolation: isolate;
+  border-radius: 28px; border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 40px 100px -40px rgba(152, 223, 75, 0.4);
+}
+/* degradado inferior para que la etiqueta del paso se lea sobre cualquier foto */
+.steps__image::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, transparent 55%, rgba(6, 7, 6, 0.55));
+}
+/* dos fotos que se alternan según el paso; 60px extra arriba y abajo para el parallax */
+.steps__img { position: absolute; left: 0; top: -60px; width: 100%; height: calc(100% + 120px); object-fit: cover; opacity: 0; transition: opacity 0.7s ease; }
+.steps__img.is-shown { opacity: 1; }
 .steps__badge {
-  position: absolute; left: 40px; bottom: 40px; z-index: 1;
+  position: absolute; left: 24px; bottom: 24px; z-index: 2;
   display: flex; flex-direction: column; gap: 4px; padding: 16px 24px; border-radius: 20px;
   background: rgba(6, 7, 6, 0.74); border: 1px solid rgba(255, 255, 255, 0.14);
 }
@@ -947,7 +956,7 @@ ul, ol { list-style: none; }
   .header__link { padding: 12px 14px; }
 
   .products__devices { margin-right: 0; max-width: calc(100% - 495px); }
-  .steps__list { padding-right: 48px; }
+  .steps { gap: 48px; }
   .testimonials__container { flex-direction: column; align-items: center; gap: 48px; }
   .testimonials__intro { width: auto; max-width: 640px; margin: 0; align-items: center; text-align: center; }
   .testimonials__grid { margin: 0; }
@@ -962,7 +971,7 @@ ul, ol { list-style: none; }
   .header__left { gap: 12px; }
   .header__link { padding: 12px 10px; font-size: 14px; }
   .header__signin { padding: 12px 10px; font-size: 14px; }
-  .step__title { font-size: 30px; line-height: 38px; }
+  .step__title { font-size: 26px; line-height: 34px; }
   .commissions { padding-top: 140px; }
   .commissions::before,
   .commissions::after { display: none; }
@@ -1180,7 +1189,7 @@ ul, ol { list-style: none; }
   .influencer__title { font-size: 24px; }
   .influencer__text { font-size: 14px; line-height: 20px; }
   .influencer__btn { width: 274px; height: 60px; margin-top: 16px; gap: 16px; background: var(--green-mobile); }
-  .steps { display: block; margin: 36px auto 0; min-height: 0; max-width: 624px; }
+  .steps { display: block; width: 100%; max-width: 624px; margin: 36px auto 0; }
   .steps__list { padding: 0; gap: 28px; }
   .steps__image { display: none; }
   .step { padding-left: 0; }
@@ -1193,7 +1202,11 @@ ul, ol { list-style: none; }
   .step.is-open .step__icon { transform: rotate(45deg); }
   .step.is-open .step__title { padding: 0; }
   .step__text { margin-top: 8px; padding: 0 12px; font-size: 14px; line-height: 20px; color: var(--white-80); max-width: none; }
-  .step__media { display: block; width: 100%; height: 380px; margin-top: 28px; object-fit: cover; }
+  /* foto del paso como tarjeta redondeada (antes 380px de alto de borde a borde) */
+  .step__media {
+    display: block; width: calc(100% - 24px); height: auto; aspect-ratio: 4 / 3; margin: 20px 12px 4px;
+    border-radius: 20px; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.08);
+  }
   .step__inner { padding-top: 0; }
 
   /* FAQ */
