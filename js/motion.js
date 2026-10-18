@@ -1,7 +1,7 @@
 /* =========================================================
    Afiliados Tinbet — Animaciones
    Títulos palabra por palabra, apariciones al hacer scroll, contadores,
-   parallax, cinta en movimiento y efectos de cursor.
+   parallax y efectos de cursor.
    Se carga antes que main.js; expone window.TinbetMotion.
    ========================================================= */
 (function () {
@@ -251,32 +251,6 @@
   window.addEventListener('load', requestFrame);
 
   /* ---------------------------------------------------------
-     Cinta de beneficios: se repite hasta cubrir el ancho
-     --------------------------------------------------------- */
-  var tickerEl = document.querySelector('.ticker');
-  function buildTicker() {
-    if (!tickerEl || reduceMotion) return;
-    toArray(tickerEl.querySelectorAll('.ticker__track')).forEach(function (track) {
-      var groups = track.querySelectorAll('.ticker__group');
-      for (var i = groups.length - 1; i > 0; i--) track.removeChild(groups[i]);
-      var group = groups[0];
-      var gw = group.getBoundingClientRect().width;
-      if (!gw) return;
-      var copies = Math.ceil(track.parentNode.getBoundingClientRect().width / gw) + 1;
-      for (var c = 0; c < copies; c++) track.appendChild(group.cloneNode(true));
-      track.style.setProperty('--group-w', gw + 'px');
-      track.style.setProperty('--dur', (gw / (isMobile() ? 40 : 55)).toFixed(1) + 's');
-    });
-    tickerEl.classList.add('is-running');
-  }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildTicker);
-  else buildTicker();
-  var lastTickerW = window.innerWidth;
-  window.addEventListener('resize', debounce(function () {
-    if (window.innerWidth !== lastTickerW) { lastTickerW = window.innerWidth; buildTicker(); }
-  }, 200));
-
-  /* ---------------------------------------------------------
      Efectos de cursor (solo mouse): foco del hero, tarjetas y
      botones "magnéticos"
      --------------------------------------------------------- */
@@ -291,7 +265,7 @@
       hero.addEventListener('pointerleave', function () { hero.classList.remove('has-pointer'); });
     }
 
-    toArray(document.querySelectorAll('.product, .testimonial, .channel')).forEach(function (el) {
+    toArray(document.querySelectorAll('.product, .testimonial, .channel, .bento__card')).forEach(function (el) {
       el.classList.add('has-spot');
     });
     document.addEventListener('pointermove', function (e) {

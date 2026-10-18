@@ -115,12 +115,17 @@
       <span class="hero__spot" aria-hidden="true"></span>
       <div class="container hero__container">
         <div class="hero__content">
-          <p class="hero__eyebrow" data-reveal>Programa de Afiliados</p>
-          <h1 class="hero__title" id="hero-title" data-split style="--d:.1s">Gana dinero <br class="br-m">con el mejor producto <br class="br-m">de <span class="text-gradient">apuestas deportivas y casino</span></h1>
+          <p class="eyebrow hero__eyebrow" data-reveal>Programa de Afiliados</p>
+          <h1 class="hero__title" id="hero-title" data-split style="--d:.1s">Gana dinero con el mejor producto de <span class="text-gradient">apuestas deportivas y casino</span></h1>
           <a class="btn btn--lg hero__btn" href="#contacto" data-reveal style="--d:.55s">
             Conviértete en Afiliado <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24">
           </a>
           <p class="hero__login" data-reveal style="--d:.65s">¿Ya tienes una cuenta? <a href="#" data-login-link>Inicia sesión</a></p>
+          <ul class="perks hero__perks" data-stagger style="--d:.7s" aria-label="Beneficios">
+            <li>Registro gratis</li>
+            <li>Pagos mensuales</li>
+            <li>Manager dedicado</li>
+          </ul>
         </div>
 
         <div class="hero__hand crop">
@@ -170,24 +175,6 @@
         </div>
       </div>
     </section>
-
-    <!-- ============ CINTA DE BENEFICIOS (decorativa: todo se repite en la página) ============ -->
-    <div class="ticker" aria-hidden="true">
-      <div class="ticker__band ticker__band--back">
-        <div class="ticker__track">
-          <ul class="ticker__group">
-            <li>Apuestas deportivas</li><li>Casino en vivo</li><li>Tragamonedas</li><li>Virtuales</li><li>Hípicas</li><li>150+ proveedores</li>
-          </ul>
-        </div>
-      </div>
-      <div class="ticker__band">
-        <div class="ticker__track">
-          <ul class="ticker__group">
-            <li>RevShare hasta 50%</li><li>CPA hasta S/ 600</li><li>Pagos mensuales</li><li>Manager dedicado</li><li>Registro gratuito</li><li>Panel de estadísticas</li>
-          </ul>
-        </div>
-      </div>
-    </div>
 
     <!-- ============ PANEL / DASHBOARD ============ -->
     <section class="dashboard" id="dashboard" aria-labelledby="dashboard-title">
@@ -242,7 +229,8 @@
     <section class="products" id="productos" aria-labelledby="products-title">
       <div class="container">
         <div class="section-head products__head">
-          <h2 class="section-title products__title" id="products-title" data-split>Nuestros <span class="text-green">productos</span> generando más ingresos para ti</h2>
+          <p class="eyebrow eyebrow--center" data-reveal>Productos</p>
+          <h2 class="section-title products__title" id="products-title" data-split style="--d:.1s">Nuestros <span class="text-green">productos</span> generando más ingresos para ti</h2>
           <p class="section-text products__text" data-reveal style="--d:.25s">Después del primer depósito, los jugadores siguen con nosotros porque siempre encuentran algo interesante entre las mil opciones de entretenimiento</p>
         </div>
         <div class="products__row" data-reveal>
@@ -299,40 +287,51 @@
     <!-- ============ ECOSISTEMA ============ -->
     <section class="ecosystem" aria-labelledby="ecosystem-title">
       <div class="container">
-        <h2 class="section-title ecosystem__title" id="ecosystem-title" data-split>Ecosistema <span class="text-green">Tinbet</span></h2>
-        <div class="ecosystem__row">
-          <dl class="ecosystem__list" data-stagger>
-            <div class="ecosystem__item">
-              <dt>Productos</dt>
-              <dd>Apuestas deportivas, Casino en vivo, Tragamonedas, Virtuales e Hípicas</dd>
-            </div>
-            <div class="ecosystem__item">
-              <dt>Proveedores</dt>
-              <dd>1spin4win, 1×2 Gaming, 3 Oaks Gaming, 4 The Player, Amatic Industries, Euro Games Technology<span class="ecosystem__extra" id="providers-extra" hidden>, Aviatrix, Big Time Gaming, DS Virtual, Endorphina, Evolution, Fazi, Golden Race, Habanero, NetEnt, Play’n GO, Pragmatic Play, Red Tiger y muchos más</span>. <button class="ecosystem__more" type="button" aria-expanded="false" aria-controls="providers-extra">Ver más</button></dd>
-            </div>
-            <div class="ecosystem__item">
-              <dt>Métodos de pago</dt>
-              <dd>Visa, MasterCard, American Express, Yape, Plin y PagoEfectivo</dd>
-            </div>
-            <div class="ecosystem__item">
-              <dt>Países habilitados</dt>
-              <dd>Perú</dd>
-            </div>
-            <div class="ecosystem__item">
-              <dt>Idioma</dt>
-              <dd>Español</dd>
-            </div>
-            <div class="ecosystem__item">
-              <dt>Moneda</dt>
-              <dd>Soles peruanos (PEN)</dd>
-            </div>
-          </dl>
-          <div class="ecosystem__laptop crop" data-reveal data-parallax="0.04" style="--d:.2s"><picture><source srcset="assets/img/laptop.avif" type="image/avif"><img src="assets/img/laptop.png" alt="Plataforma Tinbet en laptop" width="1800" height="1210" loading="lazy"></picture></div>
-          <div class="devices ecosystem__devices" data-reveal>
-            <div class="devices__laptop crop"><picture><source srcset="assets/img/laptop.avif" type="image/avif"><img src="assets/img/laptop.png" alt="Plataforma Tinbet en laptop" width="1800" height="1210" loading="lazy"></picture></div>
-            <div class="devices__phone crop"><picture><source srcset="assets/img/phone.avif" type="image/avif"><img src="assets/img/phone.png" alt="Plataforma Tinbet en smartphone" width="1400" height="1050" loading="lazy"></picture></div>
-          </div>
+        <div class="section-head ecosystem__head">
+          <p class="eyebrow eyebrow--center" data-reveal>Plataforma</p>
+          <h2 class="section-title ecosystem__title" id="ecosystem-title" data-split style="--d:.1s">Ecosistema <span class="text-green">Tinbet</span></h2>
+          <p class="section-text ecosystem__text" data-reveal style="--d:.25s">Todo lo que tus jugadores encuentran en Tinbet, en un solo lugar.</p>
         </div>
+        <ul class="bento" data-stagger>
+          <li class="bento__card bento__card--wide">
+            <span class="bento__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3Z"/><path d="m3 12 9 4.5 9-4.5"/><path d="m3 16.5 9 4.5 9-4.5"/></svg></span>
+            <h3 class="bento__title">Productos</h3>
+            <ul class="chips" aria-label="Productos">
+              <li>Apuestas deportivas</li><li>Casino en vivo</li><li>Tragamonedas</li><li>Virtuales</li><li>Hípicas</li>
+            </ul>
+          </li>
+          <li class="bento__card bento__card--wide">
+            <span class="bento__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 10h19M6.5 15h4"/></svg></span>
+            <h3 class="bento__title">Métodos de pago</h3>
+            <ul class="chips" aria-label="Métodos de pago">
+              <li>Visa</li><li>MasterCard</li><li>American Express</li><li>Yape</li><li>Plin</li><li>PagoEfectivo</li>
+            </ul>
+          </li>
+          <li class="bento__card bento__card--wide bento__card--providers">
+            <span class="bento__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="19" height="11" rx="4"/><path d="M7.5 10.5v4M5.5 12.5h4"/><circle cx="15.5" cy="11.5" r=".9"/><circle cx="17.5" cy="13.8" r=".9"/></svg></span>
+            <h3 class="bento__title">Proveedores</h3>
+            <div class="bento__stats">
+              <p><span class="bento__num" data-count>150+</span> proveedores</p>
+              <p><span class="bento__num" data-count>10,400+</span> juegos y tragamonedas</p>
+            </div>
+            <p class="bento__text">1spin4win, 1×2 Gaming, 3 Oaks Gaming, 4 The Player, Amatic Industries, Euro Games Technology<span class="ecosystem__extra" id="providers-extra" hidden>, Aviatrix, Big Time Gaming, DS Virtual, Endorphina, Evolution, Fazi, Golden Race, Habanero, NetEnt, Play’n GO, Pragmatic Play, Red Tiger y muchos más</span>. <button class="ecosystem__more" type="button" aria-expanded="false" aria-controls="providers-extra">Ver más</button></p>
+          </li>
+          <li class="bento__card bento__card--mini">
+            <span class="bento__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.4"/></svg></span>
+            <h3 class="bento__label">País</h3>
+            <p class="bento__value">Perú</p>
+          </li>
+          <li class="bento__card bento__card--mini">
+            <span class="bento__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8.5 9.5h7M8.5 12.5h4.5"/></svg></span>
+            <h3 class="bento__label">Idioma</h3>
+            <p class="bento__value">Español</p>
+          </li>
+          <li class="bento__card bento__card--mini">
+            <span class="bento__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M14.6 9.3c-.5-.8-1.5-1.3-2.6-1.3-1.5 0-2.6.8-2.6 2s1.1 1.7 2.6 2 2.8.8 2.8 2.1-1.2 2-2.8 2c-1.2 0-2.3-.5-2.8-1.4M12 6.5V8M12 16.1v1.4"/></svg></span>
+            <h3 class="bento__label">Moneda</h3>
+            <p class="bento__value">Soles (PEN)</p>
+          </li>
+        </ul>
       </div>
       <div class="providers" aria-label="Proveedores de juegos" role="region" data-reveal>
         <ul class="providers__track">
@@ -348,9 +347,10 @@
 
     <!-- ============ COMISIONES ============ -->
     <section class="commissions" id="comisiones" aria-labelledby="commissions-title">
+      <p class="eyebrow commissions__eyebrow" data-reveal>Comisiones RevShare</p>
       <div class="commissions__stage">
         <div class="commissions__head">
-          <h2 class="section-title commissions__title" id="commissions-title" data-split>Convierte tu audiencia en <span class="text-green">ingresos recurrentes</span></h2>
+          <h2 class="section-title commissions__title" id="commissions-title" data-split style="--d:.1s">Convierte tu audiencia en <span class="text-green">ingresos recurrentes</span></h2>
           <p class="section-text commissions__text" data-reveal style="--d:.25s">Recibe cada mes un porcentaje de los ingresos netos generados por tus jugadores referidos. Nuestro sistema de comisiones escalonadas simplifica el proceso.</p>
           <a class="btn btn--lg commissions__btn" href="#contacto" data-reveal style="--d:.35s">Empezar como Afiliado <img src="assets/icons/arrow-right.svg" alt="" width="28" height="28"></a>
         </div>
@@ -428,7 +428,7 @@
     <section class="influencer" id="influencers" aria-labelledby="influencer-title">
       <div class="container">
         <div class="section-head influencer__head">
-          <p class="influencer__eyebrow" data-reveal>Programa de Afiliados</p>
+          <p class="eyebrow" data-reveal>Programa de influencers</p>
           <h2 class="section-title influencer__title" id="influencer-title" data-split style="--d:.1s">¿Cómo convertirse en <span class="text-green">influencer</span>?</h2>
           <p class="section-text influencer__text" data-reveal style="--d:.3s">¡Unirse es rápido y fácil! Sigue estos pasos para empezar a ganar:</p>
           <a class="btn btn--lg influencer__btn" href="#contacto" data-reveal style="--d:.4s">Conviértete en embajador <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24"></a>
@@ -507,7 +507,8 @@
     <section class="faq" id="faqs" aria-labelledby="faq-title">
       <div class="container faq__container">
         <div class="section-head faq__head">
-          <h2 class="section-title faq__title" id="faq-title" data-split>Preguntas <span class="text-green">Frecuentes</span></h2>
+          <p class="eyebrow eyebrow--center" data-reveal>Ayuda</p>
+          <h2 class="section-title faq__title" id="faq-title" data-split style="--d:.1s">Preguntas <span class="text-green">Frecuentes</span></h2>
           <p class="section-text faq__text" data-reveal style="--d:.25s">Revisa nuestras preguntas más comunes y actívate como Afiliado Tinbet</p>
         </div>
         <div class="faq__list" data-stagger>
@@ -567,6 +568,10 @@
             </div>
           </div>
         </div>
+        <div class="faq__more" data-reveal>
+          <p class="faq__more-text"><strong>¿Tienes otra pregunta?</strong> Escríbenos por WhatsApp y te ayudamos.</p>
+          <a class="btn btn--outline faq__more-btn" href="https://wa.me/51987665213?text=Hola%2C%20tengo%20una%20pregunta%20sobre%20el%20programa%20de%20afiliados%20de%20Tinbet" target="_blank" rel="noopener">Escríbenos <img src="assets/icons/arrow-right.svg" alt="" width="20" height="20"></a>
+        </div>
       </div>
     </section>
 
@@ -577,7 +582,8 @@
       <span class="glow glow--blue" aria-hidden="true"></span>
       <div class="container testimonials__container">
         <div class="testimonials__intro">
-          <h2 class="section-title testimonials__title" id="testimonials-title" data-split>Afiliados que ya están <span class="text-green">generando ingresos</span></h2>
+          <p class="eyebrow" data-reveal>Testimonios</p>
+          <h2 class="section-title testimonials__title" id="testimonials-title" data-split style="--d:.1s">Afiliados que ya están <span class="text-green">generando ingresos</span></h2>
           <p class="section-text testimonials__text" data-reveal style="--d:.25s">Más de 300 afiliados en todo el Perú ya promocionan Tinbet y cobran sus comisiones cada mes.</p>
           <a class="btn btn--lg testimonials__btn" href="#contacto" data-reveal style="--d:.35s">Quiero ser afiliado <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24"></a>
         </div>
@@ -654,7 +660,7 @@
               <img src="assets/img/avatar-3.png" alt="" width="44" height="44" loading="lazy">
               <span class="avatars__more"><img src="assets/icons/plus.svg" alt="" width="24" height="24"></span>
             </div>
-            <h2 class="section-title contact__title" id="contact-title" data-split style="--d:.1s">Empieza a ganar <span class="text-green">ahora</span></h2>
+            <h2 class="section-title contact__title" id="contact-title" data-split style="--d:.1s">Tu manager, desde el <span class="text-green">primer día</span></h2>
             <p class="contact__text" data-reveal style="--d:.3s">Después de registrarte, un manager se pondrá en contacto contigo: responderá todas tus preguntas y te ayudará a comenzar.</p>
             <ul class="benefits" data-stagger>
               <li>Registro gratuito en solo 1 minuto</li>
@@ -664,7 +670,7 @@
             </ul>
           </div>
           <div class="contact__channels" data-reveal>
-            <p class="contact__subtitle">Contáctanos</p>
+            <p class="contact__subtitle">¿Prefieres escribirnos?</p>
             <div class="contact__cards">
               <a class="channel" href="mailto:afiliados@tinbet.pe">
                 <span class="channel__icon channel__icon--red"><img src="assets/icons/mail.svg" alt="" width="24" height="24"></span>
@@ -682,7 +688,8 @@
           <span class="form-glow" aria-hidden="true"></span>
           <div class="form-card">
             <form class="lead-form" id="lead-form" novalidate aria-labelledby="form-title">
-              <h3 class="lead-form__title" id="form-title">Contáctanos</h3>
+              <h3 class="lead-form__title" id="form-title">Regístrate gratis</h3>
+              <p class="lead-form__lead">Completa tus datos y te contactamos en menos de 1 hora.</p>
               <div class="lead-form__fields">
                 <div class="lead-form__group">
                   <div class="field">
@@ -748,7 +755,7 @@
                   </div>
                 </div>
                 <button class="btn btn--lg lead-form__submit" type="submit">
-                  <span class="lead-form__submit-text">Quiero saber más</span>
+                  <span class="lead-form__submit-text">Quiero ser afiliado</span>
                   <img src="assets/icons/arrow-right.svg" alt="" width="24" height="24">
                 </button>
                 <p class="lead-form__status" role="alert" aria-live="assertive"></p>

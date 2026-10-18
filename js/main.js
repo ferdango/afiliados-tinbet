@@ -1051,7 +1051,7 @@
   function setBusy(busy) {
     submitBtn.disabled = busy;
     submitBtn.setAttribute('aria-busy', busy ? 'true' : 'false');
-    submitText.textContent = busy ? 'Enviando…' : 'Quiero saber más';
+    submitText.textContent = busy ? 'Enviando…' : 'Quiero ser afiliado';
   }
 
   function sendLead(data) {

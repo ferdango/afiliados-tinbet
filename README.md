@@ -37,7 +37,7 @@ css/motion.css      Animaciones: apariciones, títulos por palabra, entrada del 
 js/main.js          Menú móvil, sliders con avance automático (panel, productos, etapas,
                     pasos), carruseles, acordeones, botón fijo mobile y formulario
 js/motion.js        Títulos por palabra, disparadores al hacer scroll, contadores,
-                    parallax, cinta en movimiento y efectos de cursor
+                    parallax y efectos de cursor
 assets/img          Imágenes exportadas de Figma (PNG/JPG + versiones AVIF optimizadas)
 assets/icons        Iconos SVG exportados de Figma
 ```

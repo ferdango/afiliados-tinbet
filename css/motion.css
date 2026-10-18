@@ -48,11 +48,6 @@
 .js .hero.is-ready :is(.stats__edge, .stats__glass, .stats__content) { animation: fade-in 1s ease 0.45s backwards; }
 .glow--hero { animation: breathe 10s ease-in-out infinite; }
 
-/* ---------- Cinta de beneficios ---------- */
-@keyframes ticker { to { transform: translateX(calc(-1 * var(--group-w, 0px))); } }
-.ticker.is-running .ticker__track { animation: ticker var(--dur, 40s) linear infinite; }
-.ticker.is-running .ticker__band--back .ticker__track { animation-direction: reverse; }
-
 /* ---------- Panel: etiqueta, descripción y visor ---------- */
 @keyframes dot-pulse { 50% { box-shadow: 0 0 0 5px rgba(152, 223, 75, 0); } from, to { box-shadow: 0 0 0 0 rgba(152, 223, 75, 0.5); } }
 .eyebrow::before { animation: dot-pulse 2s ease-in-out infinite; }

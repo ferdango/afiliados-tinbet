@@ -93,7 +93,6 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
   - Se pausan solo mientras el mouse o el foco de teclado está sobre el control, y solo corren con la sección en pantalla.
 
 ### Elementos nuevos
-- **Cinta de beneficios:** dos bandas cruzadas en movimiento entre el hero y el panel (RevShare hasta 50%, CPA hasta S/ 600, pagos mensuales…).
 - **Barra de progreso de lectura** en el header y **píldora** que se desliza al enlace de la sección activa. El scrollspy ya no deja marcado "Productos" al volver arriba.
 - **Botón fijo "Regístrate gratis" en mobile:** aparece después del hero y se oculta al llegar al formulario. Antes, en mobile no había un CTA de registro visible al hacer scroll.
 - **Beneficios en Contacto:** registro gratuito, comisiones, pagos mensuales y manager dedicado. Rellenan el espacio vacío que había en desktop.
@@ -120,6 +119,26 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
 - Parallax e inclinación solo en desktop.
 - Con *Reducir movimiento* activado todo se muestra quieto y sin avance automático.
 - Si el script de animaciones no carga, el contenido aparece igual a los 3 s.
+
+## 7. Revisión de todas las secciones
+
+- **Hero:**
+  - Se quitó la franja animada que cruzaba la página bajo el banner principal.
+  - Sus beneficios clave pasan al hero, junto al botón: registro gratis, pagos mensuales y manager dedicado.
+  - El título ya no usa saltos de línea forzados y se reparte en líneas equilibradas.
+  - En mobile, las métricas van en 2 columnas y la caja ocupa la mitad de alto.
+- **Etiquetas de sección:** cada sección tiene una etiqueta ("Productos", "Plataforma", "Comisiones RevShare", "Programa de influencers", "Ayuda", "Testimonios") con el mismo estilo. Antes solo algunas tenían, y con estilos distintos.
+- **Ecosistema:**
+  - Antes era una lista de texto junto a la misma laptop que ya aparece en Productos. Ahora son tarjetas con iconos.
+  - Productos y métodos de pago van como etiquetas, y los proveedores muestran las cifras 150+ y 10,400+ animadas.
+  - País, idioma y moneda van en tarjetas cortas.
+- **FAQ:** al final hay un bloque "¿Tienes otra pregunta?" con acceso directo a WhatsApp.
+- **Contacto:**
+  - Se eliminaron textos repetidos: "Contáctanos" aparecía como título del formulario y de los canales, y el título repetía el del CTA final.
+  - Ahora el título es "Tu manager, desde el primer día", el formulario "Regístrate gratis" (con un subtítulo) y el botón "Quiero ser afiliado". Los canales van bajo "¿Prefieres escribirnos?".
+  - Se quitó el hueco vacío que quedaba entre los beneficios y los canales.
+  - En mobile, el formulario aparece antes que los canales de contacto.
+- **Ritmo vertical:** espaciado parejo entre secciones (≈140 px en desktop, ≈96 px en mobile). Antes variaba entre 59 y 219 px.
 
 ## Pendiente: requiere datos del negocio
 
