@@ -56,7 +56,11 @@
 .dash-badge--a { animation: bob 5.5s ease-in-out infinite; }
 .dash-badge--b { animation: bob 6.5s ease-in-out -2s infinite; }
 @keyframes zoom-in { from { opacity: 0; scale: 0.94; } }
-.zoom-modal { animation: fade-in 0.25s ease; }
+.zoom-modal,
+.video-modal { animation: fade-in 0.25s ease; }
+.video-modal__frame { animation: zoom-in 0.4s var(--ease-out); }
+/* acordeones del footer (mobile): la lista entra suave al abrir */
+.footer__col.is-open .footer__links { animation: reveal-up 0.4s var(--ease-out); }
 .zoom-modal__scroller { animation: zoom-in 0.4s var(--ease-out); }
 
 /* ---------- Productos: cambio de producto ---------- */
@@ -151,12 +155,6 @@
 .cta__m-piece--astro { animation: drift-y 7s ease-in-out infinite; }
 .cta__m-piece--coins { animation: drift-y 5.5s ease-in-out -1.5s infinite; }
 
-/* ---------- WhatsApp: entrada y pulso ---------- */
-@keyframes wa-pulse { from { scale: 1; opacity: 0.5; } to { scale: 1.6; opacity: 0; } }
-.whatsapp { isolation: isolate; }
-.whatsapp::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: inherit; animation: wa-pulse 2.8s ease-out infinite; }
-.js .whatsapp { animation: pop 0.6s var(--ease-spring) 1.4s backwards; }
-
 /* ---------- Footer ---------- */
 .footer__links a {
   width: fit-content;
@@ -200,5 +198,5 @@
   .providers.is-marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
   .providers.is-marquee .providers__track,
   .testimonials__grid.is-marquee .testimonials__track { animation: none; }
-  .form-glow, .whatsapp::before, .testimonial-video__play { animation: none; }
+  .form-glow, .testimonial-video__play { animation: none; }
 }

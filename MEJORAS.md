@@ -162,6 +162,24 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
 - **`.nojekyll`** para que GitHub Pages publique los archivos tal cual.
 - `decoding="async"` en las imágenes diferidas; un solo `h1` y encabezados sin saltos de nivel; todas las imágenes con `alt`, ancho y alto.
 
+## 9. Footer, redes y video testimonial
+
+- **Footer en mobile:** los acordeones "Afiliados" y "Acerca de" empiezan cerrados (antes "Afiliados" venía abierto) y la lista entra con una animación suave. En desktop las listas siempre se ven y el título ya no se anuncia como desplegable a los lectores de pantalla.
+- **Redes sociales:** se enlazaron las 4 redes, que también figuran como perfiles oficiales (`sameAs`) en los datos estructurados:
+  - Facebook → `https://www.facebook.com/tinbet.pe.oficial`
+  - Instagram → `https://www.instagram.com/tinbet.oficial/` (sin el parámetro de seguimiento `srtk` del enlace compartido)
+  - TikTok → `https://www.tiktok.com/@tiotinbet`
+  - YouTube → `https://www.youtube.com/@tinbetplay`
+- **Widget de Bitrix24:**
+  - El botón flotante de WhatsApp se reemplazó por el widget de contacto de Bitrix24 (`tinbet.bitrix24.es`), que hoy abre el chat "Soporte en línea".
+  - En mobile se ubica en la esquina, alineado con el botón fijo "Regístrate gratis" (Bitrix lo ponía encima). Se oculta mientras están abiertos el menú o un modal.
+  - Los botones "Escríbenos" del FAQ y "Chatea con nosotros" del mensaje de éxito también abren ese chat, así las conversaciones quedan en el CRM. Si el widget no carga, abren WhatsApp como respaldo.
+- **Video testimonial:**
+  - La tarjeta de video abre un modal que reproduce un **archivo subido** (`.mp4`, `.webm`, `.mov`) o un **enlace de YouTube** (incluido Shorts).
+  - Cada tarjeta indica su video en `data-video`. Los verticales se muestran en 9:16.
+  - El video se detiene al cerrar (botón, `Esc` o clic fuera) y el foco vuelve a la tarjeta.
+  - Mientras no haya video, el modal muestra un aviso de "muy pronto" sobre la imagen de la tarjeta.
+
 ## Pendiente: requiere datos del negocio
 
 Estos puntos no se pueden resolver solo con código y conviene definirlos antes de publicar:
@@ -169,9 +187,10 @@ Estos puntos no se pueden resolver solo con código y conviene definirlos antes 
 1. **Cifras inconsistentes entre desktop y mobile en el Figma:** 300+ vs 100,000+ afiliados y S/15,000 vs S/30,000 de ingresos potenciales. Se usaron las de desktop.
 2. **Tramos de comisión:** el último salta de "S/ 20,000 a S/ 25,000" a "+ S/ 50,000". Falta definir el rango entre S/ 25,000 y S/ 50,000.
 3. **Testimonios:** son contenido de ejemplo (el mismo texto 5 veces, "CEO de XYZ"). Hay que reemplazarlos por testimonios reales con autorización.
-4. **Video testimonial:** no hay video. Basta con poner la URL en `CONFIG.testimonialVideo` y se abre en un modal.
+4. **Video testimonial:** falta el archivo o el enlace de YouTube; se pone en `data-video` de la tarjeta (ver README).
 5. **Captura del panel:** se usa una captura con datos de ejemplo. Conviene una captura oficial y actual.
-6. **URLs reales:** endpoint del formulario (`CONFIG.formEndpoint`), redes sociales, Términos y Condiciones y enlaces de "Acerca de". Hay 10 enlaces con `href="#"`; los buscadores los marcan como enlaces vacíos.
+6. **URLs reales:** endpoint del formulario (`CONFIG.formEndpoint`), Términos y Condiciones y enlaces de "Acerca de". Quedan 6 enlaces con `href="#"`; los buscadores los marcan como enlaces vacíos.
 7. **Dominio propio:** si la landing se mueve a un dominio propio, hay que cambiar la URL canónica (ver README). Además, en GitHub Pages el `robots.txt` solo se lee si está en la raíz del dominio: con la URL actual (`/afiliados-tinbet/`) Google no lo usa, así que el sitemap se debe enviar a mano en Google Search Console.
 8. **Etiqueta "150+ proveedores. 10,400+ juegos y tragamonedas"** repetida en los 4 productos, incluso en Apuestas deportivas e Hípicas. Conviene un dato propio para cada producto.
 9. **Tipografías:** *Charlie Display* y *Circular Std* (usadas en algunos botones del Figma) no son libres. Si Tinbet tiene licencia web, se pueden agregar; mientras tanto se usa Inter.
+10. **Canal de WhatsApp en Bitrix24:** el widget está integrado, pero hoy solo tiene el chat en línea. Para que ofrezca WhatsApp hay que activar ese canal en Bitrix24 (CRM › Widget del sitio); no requiere cambios en la landing. El número de respaldo `+51 987 665 213` viene del diseño y conviene confirmarlo.

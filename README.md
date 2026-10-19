@@ -24,12 +24,32 @@ Al inicio de `js/main.js` está el objeto `CONFIG`:
 | Clave | Uso |
 |---|---|
 | `formEndpoint` | Endpoint que recibe el formulario por `POST` en JSON. Si está vacío, el envío se simula |
-| `testimonialVideo` | URL del video testimonial (embed de YouTube o `.mp4`) |
+| `testimonialVideo` | Video por defecto para las tarjetas de video que no tengan `data-video` |
 
 Los botones **"Iniciar sesión"** (`data-login-link`) y **"Regístrate"** (`data-register-link`) tienen su URL directamente en `index.html`:
 
 - `https://www.tinbet.pe/es/home#login`
 - `https://www.tinbet.pe/es/register`
+
+## Widget de contacto (Bitrix24)
+
+- Al final de `index.html` está el cargador del widget de `tinbet.bitrix24.es`, que reemplaza al botón flotante de WhatsApp.
+- Los canales que muestra (chat, WhatsApp, etc.) se configuran en Bitrix24 › CRM › Widget del sitio, sin tocar el código.
+- Los enlaces con `data-chat-open` abren ese chat; si el widget no cargó, siguen su enlace de WhatsApp.
+- En mobile, `css/styles.css` reubica el widget junto al botón fijo de registro. Mientras hay un modal o el menú abiertos, se oculta con la clase `has-overlay`.
+
+## Video testimonial
+
+Las tarjetas de video de **Testimonios** abren un modal con el video que indique su atributo `data-video` en `index.html`:
+
+```html
+<button class="testimonial-video" type="button" aria-label="Ver video testimonial" data-video="assets/video/testimonio.mp4">
+```
+
+- **Archivo propio:** subirlo a `assets/video/` en formato `.mp4` (H.264), `.webm` o `.mov`. GitHub no acepta archivos de más de 100 MB; conviene que pese menos de 30 MB.
+- **YouTube:** pegar el enlace tal cual (`youtube.com/watch?v=…`, `youtu.be/…`, `youtube.com/shorts/…`). Se reproduce con `youtube-nocookie.com`.
+- Los videos verticales (de celular o Shorts) se muestran automáticamente en formato 9:16.
+- Mientras no haya video, el modal muestra "Muy pronto podrás ver este testimonio en video".
 
 ## SEO
 

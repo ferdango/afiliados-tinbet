@@ -271,30 +271,14 @@ ul, ol { list-style: none; }
 .stats__value { font: 700 48px/56px var(--font-body); color: #fff; }
 .stats__label { font: 500 18px/28px var(--font-body); color: var(--text-soft); }
 
-/* WhatsApp flotante */
-.whatsapp {
-  position: fixed; right: 41px; bottom: 40px; z-index: 45;
-  width: 74px; height: 74px; border-radius: 54px;
-  background: var(--green);
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 0.2s ease;
-}
-.whatsapp:hover { transform: scale(1.06); }
-.whatsapp__label {
-  position: absolute; right: calc(100% + 14px); top: 50%; translate: 8px -50%;
-  padding: 8px 14px; border-radius: 12px; background: #fff; color: var(--bg);
-  font: 600 14px/20px var(--font-body); white-space: nowrap; pointer-events: none;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  opacity: 0; transition: opacity 0.25s ease, translate 0.25s var(--ease-out);
-}
-.whatsapp:hover .whatsapp__label,
-.whatsapp:focus-visible .whatsapp__label { opacity: 1; translate: 0 -50%; }
 .sticky-cta { display: none; }
+/* Widget de Bitrix24: se oculta mientras hay un modal o el menú mobile abiertos */
+.b24-widget-button-wrapper { transition: opacity 0.25s ease, visibility 0.25s; }
+.has-overlay .b24-widget-button-wrapper { opacity: 0; visibility: hidden; pointer-events: none; }
 .dots { display: none; } /* puntos de carrusel: solo en mobile */
 /* copias para el bucle infinito: productos y testimonios solo son carrusel en mobile */
 .products__list > [data-loop-clone],
 .testimonials__track > [data-loop-clone] { display: none; }
-.whatsapp img { width: 43px; height: 44px; }
 
 /* =========================================================
    DASHBOARD
@@ -1066,15 +1050,11 @@ ul, ol { list-style: none; }
   .stats__value { font-size: 30px; line-height: 36px; }
   .stats__label { font: 600 14px/20px var(--font-body); color: rgba(255, 255, 255, 0.76); }
 
-  .whatsapp {
-    right: 12px; bottom: 24px; width: 64px; height: 64px;
-    background: linear-gradient(180deg, #41a353, #22512a);
-    box-shadow: 0 4px 32px rgba(29, 34, 32, 0.56);
-  }
-  .whatsapp img { width: 36px; height: 37px; }
-  .whatsapp__label { display: none; }
+  /* Widget de Bitrix24 en la esquina, alineado con el botón fijo de registro
+     (Bitrix lo ubica a 50px de los bordes y lo superponía) */
+  .b24-widget-button-wrapper.b24-widget-button-position-bottom-right { right: 12px !important; bottom: 23px !important; }
 
-  /* Registro fijo: a la izquierda del botón de WhatsApp */
+  /* Registro fijo: a la izquierda del widget de contacto */
   .sticky-cta {
     display: inline-flex; position: fixed; left: 12px; bottom: 28px; z-index: 44;
     width: min(100% - 100px, 420px); height: 56px; padding: 0 24px; justify-content: space-between;
@@ -1331,16 +1311,33 @@ ul, ol { list-style: none; }
   .footer__legal { margin: 0; padding: 0 max(12px, (100% - 600px) / 2) 32px; background: rgba(0, 0, 0, 0.2); text-align: left; }
 }
 
-/* Video testimonial sin URL configurada: sin affordance de click */
-.testimonial-video[data-video=""] { cursor: default; }
 
 /* Modal de video */
-.video-modal { position: fixed; inset: 0; z-index: 150; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(0, 0, 0, 0.8); }
+.video-modal {
+  position: fixed; inset: 0; z-index: 150; display: flex; align-items: center; justify-content: center; padding: 72px 16px 24px;
+  background: rgba(6, 7, 6, 0.9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
 .video-modal[hidden] { display: none; }
-.video-modal__frame { width: min(960px, 100%); aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #000; }
+/* 16:9 que entra completo en pantalla, a lo ancho o a lo alto */
+.video-modal__frame {
+  width: min(1040px, 100%, (100vh - 120px) * 16 / 9); aspect-ratio: 16 / 9;
+  border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+}
+/* videos verticales (celular o YouTube Shorts) */
+.video-modal__frame.is-vertical { width: min(440px, 100%, (100vh - 120px) * 9 / 16); aspect-ratio: 9 / 16; }
 .video-modal__frame iframe,
-.video-modal__frame video { width: 100%; height: 100%; border: 0; display: block; }
-.video-modal__close { position: absolute; top: 16px; right: 16px; width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, 0.12); color: #fff; font-size: 24px; }
+.video-modal__frame video { width: 100%; height: 100%; border: 0; display: block; background: #000; }
+.video-modal__empty {
+  position: relative; width: 100%; height: 100%; display: flex; align-items: flex-end; justify-content: center; padding: 32px;
+  background: #1d2220 center / cover no-repeat;
+}
+.video-modal__empty::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6, 7, 6, 0.2), rgba(6, 7, 6, 0.85)); }
+.video-modal__empty p { position: relative; padding: 12px 20px; border-radius: 840px; background: rgba(6, 7, 6, 0.75); font: 600 16px/22px var(--font-body); color: #fff; text-align: center; }
+.video-modal__close {
+  position: absolute; top: 16px; right: 16px; width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12); color: #fff; font-size: 22px; transition: background-color 0.2s ease;
+}
+.video-modal__close:hover { background: rgba(255, 255, 255, 0.24); }
 
 /* Visor de la captura del panel */
 .zoom-modal {

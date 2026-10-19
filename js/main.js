@@ -25,6 +25,10 @@
   function toArray(list) {
     return Array.prototype.slice.call(list);
   }
+  // marca que hay un modal o el menú abiertos (oculta el widget de Bitrix24)
+  function setOverlay(on) {
+    root.classList.toggle('has-overlay', on);
+  }
   function restartClass(el, cls) {
     if (reduceMotion || !el) return;
     el.classList.remove(cls);
@@ -311,6 +315,7 @@
     menu.setAttribute('aria-hidden', open ? 'false' : 'true');
     openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.style.overflow = open ? 'hidden' : '';
+    setOverlay(open);
     if (main) main.inert = open;
     if (open) {
       menuFocusables()[0].focus();
@@ -380,6 +385,7 @@
     function close() {
       modal.remove();
       document.body.style.overflow = '';
+      setOverlay(false);
       if (main) main.inert = false;
       document.removeEventListener('keydown', onKey);
       opener.focus({ preventScroll: true });
@@ -397,6 +403,7 @@
     document.addEventListener('keydown', onKey);
     document.body.appendChild(modal);
     document.body.style.overflow = 'hidden';
+    setOverlay(true);
     if (main) main.inert = true;
     closeBtn.focus();
   }
@@ -686,13 +693,31 @@
     });
   });
 
-  document.querySelectorAll('[data-accordion]').forEach(function (col) {
+  // Footer: en mobile son acordeones cerrados de inicio; en desktop las listas
+  // siempre se ven, así que el título deja de anunciarse como desplegable.
+  var footerCols = toArray(document.querySelectorAll('[data-accordion]'));
+  function syncFooterAccordions() {
+    footerCols.forEach(function (col) {
+      var head = col.querySelector('.footer__col-title');
+      if (isMobile()) {
+        head.setAttribute('aria-expanded', col.classList.contains('is-open') ? 'true' : 'false');
+        head.setAttribute('aria-controls', head.getAttribute('data-controls'));
+      } else {
+        head.removeAttribute('aria-expanded');
+        head.removeAttribute('aria-controls');
+      }
+    });
+  }
+  footerCols.forEach(function (col) {
     var head = col.querySelector('.footer__col-title');
+    head.setAttribute('data-controls', head.getAttribute('aria-controls'));
     head.addEventListener('click', function () {
       if (!isMobile()) return;
       setOpen(col, head, !col.classList.contains('is-open'));
     });
   });
+  syncFooterAccordions();
+  window.addEventListener('resize', syncFooterAccordions);
 
   /* ---------------------------------------------------------
      Testimonios: columnas infinitas (desktop) y puntos (mobile)
@@ -729,46 +754,148 @@
   });
 
   /* ---------------------------------------------------------
-     Video testimonial (solo si hay URL configurada)
+     Video testimonial en modal
+     Cada tarjeta lee su video de data-video: un archivo (.mp4, .webm, .mov)
+     o un enlace de YouTube (watch, youtu.be, shorts o embed). Sin video,
+     el modal avisa que estará disponible pronto.
      --------------------------------------------------------- */
-  var videoBtn = document.querySelector('.testimonial-video');
-  var videoUrl = videoBtn ? videoBtn.getAttribute('data-video') || CONFIG.testimonialVideo : '';
-  tGrid.querySelectorAll('.testimonial-video').forEach(function (btn) {
-    if (videoUrl) btn.setAttribute('data-video', videoUrl);
-    else if (!btn.hasAttribute('data-clone')) {
-      btn.setAttribute('aria-disabled', 'true');
-      btn.setAttribute('aria-label', 'Video testimonial (próximamente)');
+  function parseVideo(url) {
+    url = (url || '').trim();
+    if (!url) return null;
+    var yt = url.match(/(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([\w-]{11})/);
+    if (yt) {
+      return {
+        type: 'youtube',
+        vertical: /\/shorts\//.test(url),
+        src: 'https://www.youtube-nocookie.com/embed/' + yt[1] + '?autoplay=1&rel=0&modestbranding=1&playsinline=1'
+      };
     }
+    if (/\.(mp4|webm|mov|m4v|ogv)(?:[?#]|$)/i.test(url)) return { type: 'file', src: url };
+    return null;
+  }
+
+  var videoCards = toArray(tGrid.querySelectorAll('.testimonial-video'));
+  videoCards.forEach(function (card) {
+    if (!card.getAttribute('data-video') && CONFIG.testimonialVideo) card.setAttribute('data-video', CONFIG.testimonialVideo);
   });
   // delegado: también responden las copias del carrusel
   tGrid.addEventListener('click', function (e) {
-    var btn = e.target.closest('.testimonial-video');
-    if (btn && videoUrl) openVideo(videoUrl, videoBtn);
+    var card = e.target.closest('.testimonial-video');
+    if (!card) return;
+    // el foco vuelve a la tarjeta original, no a una copia oculta
+    var opener = card.hasAttribute('data-clone') || card.hasAttribute('data-loop-clone')
+      ? videoCards.filter(function (c) {
+          return !c.hasAttribute('data-clone') && !c.hasAttribute('data-loop-clone') &&
+            c.getAttribute('data-video') === card.getAttribute('data-video');
+        })[0] || card
+      : card;
+    openVideo(card.getAttribute('data-video'), opener, card.querySelector('.testimonial-video__img'));
   });
 
-  function openVideo(url, opener) {
+  function openVideo(url, opener, poster) {
+    var video = parseVideo(url);
     var modal = document.createElement('div');
+    var frame = document.createElement('div');
+    var closeBtn = document.createElement('button');
     modal.className = 'video-modal';
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-label', 'Video testimonial');
-    var media = /\.mp4($|\?)/.test(url)
-      ? '<video src="' + url + '" controls autoplay playsinline></video>'
-      : '<iframe src="' + url + '" title="Video testimonial" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-    modal.innerHTML = '<div class="video-modal__frame">' + media + '</div>' +
-      '<button class="video-modal__close" type="button" aria-label="Cerrar video">✕</button>';
-    function close() {
-      modal.remove();
-      document.removeEventListener('keydown', onKey);
-      opener.focus();
+    frame.className = 'video-modal__frame';
+    closeBtn.className = 'video-modal__close';
+    closeBtn.type = 'button';
+    closeBtn.setAttribute('aria-label', 'Cerrar video');
+    closeBtn.textContent = '✕';
+
+    var media;
+    if (video && video.type === 'youtube') {
+      media = document.createElement('iframe');
+      media.src = video.src;
+      media.title = 'Video testimonial';
+      media.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      media.allowFullscreen = true;
+      if (video.vertical) frame.classList.add('is-vertical');
+    } else if (video && video.type === 'file') {
+      media = document.createElement('video');
+      media.src = video.src;
+      media.controls = true;
+      media.autoplay = true;
+      media.playsInline = true;
+      media.preload = 'auto';
+      if (poster) media.poster = poster.currentSrc || poster.src;
+      // videos grabados en vertical (celular) se muestran en formato 9:16
+      media.addEventListener('loadedmetadata', function () {
+        if (media.videoHeight > media.videoWidth) frame.classList.add('is-vertical');
+      });
+      media.addEventListener('error', function () {
+        frame.replaceChildren(emptyState('No pudimos cargar el video. Inténtalo más tarde.'));
+      });
+    } else {
+      media = emptyState('Muy pronto podrás ver este testimonio en video.');
     }
-    function onKey(e) { if (e.key === 'Escape') close(); }
+
+    function emptyState(text) {
+      var box = document.createElement('div');
+      var msg = document.createElement('p');
+      box.className = 'video-modal__empty';
+      if (poster) box.style.backgroundImage = 'url("' + (poster.currentSrc || poster.src) + '")';
+      msg.textContent = text;
+      box.appendChild(msg);
+      return box;
+    }
+
+    frame.appendChild(media);
+    modal.appendChild(frame);
+    modal.appendChild(closeBtn);
+
+    function close() {
+      modal.remove(); // al quitar el reproductor el video se detiene
+      document.body.style.overflow = '';
+      setOverlay(false);
+      if (main) main.inert = false;
+      document.removeEventListener('keydown', onKey);
+      opener.focus({ preventScroll: true });
+    }
+    function onKey(e) {
+      if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') {
+        // el foco queda dentro del modal: botón cerrar y reproductor
+        var focusables = [closeBtn];
+        if (media.tagName === 'VIDEO' || media.tagName === 'IFRAME') focusables.push(media);
+        var i = focusables.indexOf(document.activeElement);
+        e.preventDefault();
+        focusables[(i + (e.shiftKey ? -1 : 1) + focusables.length) % focusables.length].focus();
+      }
+    }
     modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
-    modal.querySelector('.video-modal__close').addEventListener('click', close);
+    closeBtn.addEventListener('click', close);
     document.addEventListener('keydown', onKey);
     document.body.appendChild(modal);
-    modal.querySelector('.video-modal__close').focus();
+    document.body.style.overflow = 'hidden';
+    setOverlay(true);
+    if (main) main.inert = true;
+    closeBtn.focus();
+    // se llama dentro del clic del usuario: así el navegador permite reproducir con sonido
+    if (media.tagName === 'VIDEO') {
+      var playing = media.play();
+      if (playing && playing.catch) playing.catch(function () {});
+    }
   }
+
+  /* ---------------------------------------------------------
+     Botones "Escríbenos": abren el chat del widget de Bitrix24.
+     Si el widget no cargó, siguen su enlace de WhatsApp como respaldo.
+     --------------------------------------------------------- */
+  document.querySelectorAll('[data-chat-open]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var channel = document.querySelector('.b24-widget-button-openline_livechat');
+      var button = document.querySelector('.b24-widget-button-inner-container');
+      var target = channel || button;
+      if (!target) return;
+      e.preventDefault();
+      target.click();
+    });
+  });
 
   /* ---------------------------------------------------------
      Botón fijo de registro (mobile): visible entre el hero y el formulario

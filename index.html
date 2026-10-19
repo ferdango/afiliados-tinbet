@@ -76,6 +76,12 @@
         },
         "email": "afiliados@tinbet.pe",
         "telephone": "+51 987 665 213",
+        "sameAs": [
+          "https://www.facebook.com/tinbet.pe.oficial",
+          "https://www.instagram.com/tinbet.oficial/",
+          "https://www.tiktok.com/@tiotinbet",
+          "https://www.youtube.com/@tinbetplay"
+        ],
         "contactPoint": [
           {
             "@type": "ContactPoint",
@@ -697,8 +703,8 @@
           </div>
         </div>
         <div class="faq__more" data-reveal>
-          <p class="faq__more-text"><strong>¿Tienes otra pregunta?</strong> Escríbenos por WhatsApp y te ayudamos.</p>
-          <a class="btn btn--outline faq__more-btn" href="https://wa.me/51987665213?text=Hola%2C%20tengo%20una%20pregunta%20sobre%20el%20programa%20de%20afiliados%20de%20Tinbet" target="_blank" rel="noopener">Escríbenos <img src="assets/icons/arrow-right.svg" alt="" width="20" height="20"></a>
+          <p class="faq__more-text"><strong>¿Tienes otra pregunta?</strong> Escríbenos por el chat y te ayudamos.</p>
+          <a class="btn btn--outline faq__more-btn" data-chat-open href="https://wa.me/51987665213?text=Hola%2C%20tengo%20una%20pregunta%20sobre%20el%20programa%20de%20afiliados%20de%20Tinbet" target="_blank" rel="noopener">Escríbenos <img src="assets/icons/arrow-right.svg" alt="" width="20" height="20"></a>
         </div>
       </div>
     </section>
@@ -727,6 +733,7 @@
                   <img class="testimonial__quote" src="assets/icons/quote.svg" alt="" width="28" height="28">
                 </footer>
               </article>
+              <!-- data-video: archivo subido (p. ej. assets/video/testimonio.mp4) o enlace de YouTube -->
               <button class="testimonial-video" type="button" aria-label="Ver video testimonial" data-video="">
                 <picture><source srcset="assets/img/testimonial-video.avif" type="image/avif"><img class="testimonial-video__img" src="assets/img/testimonial-video.jpg" alt="" width="860" height="573" loading="lazy" decoding="async"></picture>
                 <img class="testimonial-video__play" src="assets/icons/play.svg" alt="" width="64" height="64">
@@ -906,7 +913,7 @@
                 </ol>
               </div>
               <div class="form-success__actions">
-                <a class="btn btn--lg form-success__wa" href="https://wa.me/51987665213?text=Hola%2C%20acabo%20de%20registrarme%20como%20afiliado%20de%20Tinbet" target="_blank" rel="noopener"><img src="assets/icons/whatsapp.svg" alt="" width="22" height="22"> Escríbenos por WhatsApp</a>
+                <a class="btn btn--lg form-success__wa" data-chat-open href="https://wa.me/51987665213?text=Hola%2C%20acabo%20de%20registrarme%20como%20afiliado%20de%20Tinbet" target="_blank" rel="noopener">Chatea con nosotros <img src="assets/icons/arrow-right.svg" alt="" width="22" height="22"></a>
                 <a class="form-success__link" href="#faqs">Mientras tanto, revisa las preguntas frecuentes</a>
               </div>
             </div>
@@ -946,8 +953,8 @@
           </picture>
           <p>Afiliados Tinbet es un programa oficial de entretenimiento con apuestas deportivas y casino online</p>
         </div>
-        <nav class="footer__col is-open" data-accordion aria-label="Afiliados">
-          <button class="footer__col-title" type="button" aria-expanded="true" aria-controls="footer-afiliados">Afiliados <img src="assets/icons/plus-solid.svg" alt="" width="24" height="24"></button>
+        <nav class="footer__col" data-accordion aria-label="Afiliados">
+          <button class="footer__col-title" type="button" aria-expanded="false" aria-controls="footer-afiliados">Afiliados <img src="assets/icons/plus-solid.svg" alt="" width="24" height="24"></button>
           <ul class="footer__links" id="footer-afiliados">
             <li><a href="#productos">Productos</a></li>
             <li><a href="#comisiones">Comisiones</a></li>
@@ -973,10 +980,10 @@
         <div class="footer__social">
           <p class="footer__social-title">Redes sociales</p>
           <div class="footer__icons">
-            <a href="#" aria-label="Instagram de Tinbet" target="_blank" rel="noopener"><img src="assets/icons/instagram.svg" alt="" width="24" height="24"></a>
-            <a href="#" aria-label="TikTok de Tinbet" target="_blank" rel="noopener"><img src="assets/icons/tiktok.svg" alt="" width="24" height="24"></a>
-            <a href="#" aria-label="Facebook de Tinbet" target="_blank" rel="noopener"><img src="assets/icons/facebook.svg" alt="" width="24" height="24"></a>
-            <a href="#" aria-label="YouTube de Tinbet" target="_blank" rel="noopener"><img class="footer__yt" src="assets/icons/youtube.svg" alt="" width="22" height="16"></a>
+            <a href="https://www.instagram.com/tinbet.oficial/" aria-label="Instagram de Tinbet (@tinbet.oficial)" target="_blank" rel="noopener"><img src="assets/icons/instagram.svg" alt="" width="24" height="24"></a>
+            <a href="https://www.tiktok.com/@tiotinbet" aria-label="TikTok de Tinbet (@tiotinbet)" target="_blank" rel="noopener"><img src="assets/icons/tiktok.svg" alt="" width="24" height="24"></a>
+            <a href="https://www.facebook.com/tinbet.pe.oficial" aria-label="Facebook de Tinbet" target="_blank" rel="noopener"><img src="assets/icons/facebook.svg" alt="" width="24" height="24"></a>
+            <a href="https://www.youtube.com/@tinbetplay" aria-label="YouTube de Tinbet (@tinbetplay)" target="_blank" rel="noopener"><img class="footer__yt" src="assets/icons/youtube.svg" alt="" width="22" height="16"></a>
           </div>
         </div>
         <p class="footer__copy">© 2026 Afiliados Tinbet. Todos los derechos reservados.</p>
@@ -991,9 +998,13 @@
   <!-- Registro fijo en mobile: aparece tras el hero y se oculta al llegar al formulario -->
   <a class="btn sticky-cta" href="https://www.tinbet.pe/es/register" data-register-link>Regístrate gratis <img src="assets/icons/arrow-right.svg" alt="" width="20" height="20"></a>
 
-  <a class="whatsapp" href="https://wa.me/51987665213?text=Hola%2C%20quiero%20ser%20afiliado%20de%20Tinbet" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
-    <span class="whatsapp__label" aria-hidden="true">¿Hablamos?</span>
-    <img src="assets/icons/whatsapp.svg" alt="" width="43" height="44">
-  </a>
+  <!-- Bitrix24: widget de contacto (WhatsApp y otros canales) de tinbet.bitrix24.es.
+       Reemplaza al botón flotante de WhatsApp. Se configura desde Bitrix24 › CRM › Widget del sitio. -->
+  <script>
+    (function(w,d,u){
+      var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/60000|0);
+      var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);
+    })(window,document,'https://cdn.bitrix24.es/b31913245/crm/site_button/loader_3_2rhzz2.js');
+  </script>
 </body>
 </html>
