@@ -68,16 +68,7 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
 - **Corrección:** la etiqueta decía "Rev Share **Desde** 50%", pero las comisiones van de 20% a 50%. Ahora dice "**Hasta** 50%".
 
 ### Sliders
-- **Panel de afiliados:**
-  - Las 5 pestañas mostraban la misma captura. Ahora cada una muestra la zona del panel que le corresponde (resumen, comisiones por canal, tabla del mes, tendencias de 12 meses, montos en soles).
-  - Debajo de las pestañas, un título y una descripción explican qué ofrece cada una.
-  - Botón **Ampliar**, o clic en la captura activa: abre la captura completa en un visor. En mobile se puede recorrer con el dedo y arranca en la zona de la pestaña elegida.
-  - En mobile, las pestañas pasan a ser una cápsula compacta con bordes que se desvanecen, en lugar de las franjas grises de borde a borde. La captura es más grande, con sombra y brillo detrás.
-  - Etiqueta "Panel de afiliados" sobre el título.
-  - Píldora que se desliza entre pestañas y se llena mientras avanza sola cada 5 s.
-  - Las capturas no activas se atenúan. En desktop se puede arrastrar con el mouse o hacer clic en la siguiente.
-  - En mobile, al deslizar con el dedo cambia la pestaña activa.
-  - La captura se "endereza" en 3D al hacer scroll.
+- **Panel de afiliados:** tuvo pestañas con avance automático; en la ronda 8 se reemplazó por una sola captura (ver abajo).
 - **Productos (desktop):** rotan solos con una barra de progreso en la tarjeta activa. El halo detrás de los dispositivos toma el color de cada producto.
 - **Comisiones (desktop):**
   - La ola se dibuja de izquierda a derecha y las etapas aparecen una tras otra.
@@ -144,6 +135,33 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
   - En mobile, la foto del paso abierto es una tarjeta redondeada en lugar de una franja de 380 px de alto.
 - **Ritmo vertical:** espaciado parejo entre secciones (≈140 px en desktop, ≈96 px en mobile). Antes variaba entre 59 y 219 px.
 
+## 8. Panel con una sola imagen, enlaces a Tinbet y SEO completo
+
+### Panel de afiliados
+- Las pestañas y el slider se reemplazaron por **una sola captura** dentro de un marco de navegador, con brillo detrás, inclinación 3D al hacer scroll y dos etiquetas flotantes en desktop.
+- Clic en la captura o en **Ampliar**: se abre completa y legible en un visor (en mobile se recorre con el dedo).
+- Debajo, 4 tarjetas explican lo que muestra el panel: resumen del mes, tendencias de 12 meses, comisiones por canal y montos en soles.
+
+### Enlaces
+- **"Iniciar sesión"** (antes "Inicia sesión") en el header, el menú mobile y el hero lleva a `https://www.tinbet.pe/es/home#login`.
+- **"Regístrate"** en el header, el menú mobile y el botón fijo mobile lleva a `https://www.tinbet.pe/es/register`.
+- Los enlaces están en el HTML (`data-login-link` / `data-register-link`), así funcionan sin JavaScript y los leen los buscadores.
+- El título del formulario pasó de "Regístrate gratis" a **"Únete al programa"**, para no confundirlo con el registro de tinbet.pe.
+
+### SEO
+- **URL canónica:** `https://ferdango.github.io/afiliados-tinbet/` (GitHub Pages, donde está publicada). Con `hreflang` es-PE y x-default.
+- **Title** de 57 caracteres y **description** de 149, con las palabras clave del programa (afiliados, comisión, apuestas deportivas, casino, Perú).
+- **Meta robots** con `index, follow` y vista previa grande de imágenes.
+- **Open Graph y X (Twitter)** completos, con una **imagen social de 1200×630** (`assets/img/og-image.jpg`).
+- **Datos estructurados** (JSON-LD) enlazados entre sí: Organization (logo, correo, teléfono), WebSite, ImageObject y WebPage + FAQPage con las 5 preguntas.
+- **`sitemap.xml`** con la página, sus versiones de idioma y las imágenes principales.
+- **`robots.txt`** que permite todo y apunta al sitemap.
+- **Iconos:** `favicon.ico`, PNG de 32 y 48 px, `apple-touch-icon` de 180 px e iconos de 192 y 512 px, generados desde el logo vectorial del Figma.
+- **`site.webmanifest`** con nombre, colores e iconos.
+- **Página 404** propia con `noindex`.
+- **`.nojekyll`** para que GitHub Pages publique los archivos tal cual.
+- `decoding="async"` en las imágenes diferidas; un solo `h1` y encabezados sin saltos de nivel; todas las imágenes con `alt`, ancho y alto.
+
 ## Pendiente: requiere datos del negocio
 
 Estos puntos no se pueden resolver solo con código y conviene definirlos antes de publicar:
@@ -152,8 +170,8 @@ Estos puntos no se pueden resolver solo con código y conviene definirlos antes 
 2. **Tramos de comisión:** el último salta de "S/ 20,000 a S/ 25,000" a "+ S/ 50,000". Falta definir el rango entre S/ 25,000 y S/ 50,000.
 3. **Testimonios:** son contenido de ejemplo (el mismo texto 5 veces, "CEO de XYZ"). Hay que reemplazarlos por testimonios reales con autorización.
 4. **Video testimonial:** no hay video. Basta con poner la URL en `CONFIG.testimonialVideo` y se abre en un modal.
-5. **Capturas del panel:** las 5 pestañas (Dashboard, Campañas…) muestran la misma imagen. Se necesita una captura por pestaña.
-6. **URLs reales:** login de afiliados (`CONFIG.loginUrl`), endpoint del formulario (`CONFIG.formEndpoint`), redes sociales, Términos y Condiciones y enlaces de "Acerca de".
-7. **Open Graph:** falta la URL de producción y una imagen social (1200×630) para `og:url` y `og:image`.
+5. **Captura del panel:** se usa una captura con datos de ejemplo. Conviene una captura oficial y actual.
+6. **URLs reales:** endpoint del formulario (`CONFIG.formEndpoint`), redes sociales, Términos y Condiciones y enlaces de "Acerca de". Hay 10 enlaces con `href="#"`; los buscadores los marcan como enlaces vacíos.
+7. **Dominio propio:** si la landing se mueve a un dominio propio, hay que cambiar la URL canónica (ver README). Además, en GitHub Pages el `robots.txt` solo se lee si está en la raíz del dominio: con la URL actual (`/afiliados-tinbet/`) Google no lo usa, así que el sitemap se debe enviar a mano en Google Search Console.
 8. **Etiqueta "150+ proveedores. 10,400+ juegos y tragamonedas"** repetida en los 4 productos, incluso en Apuestas deportivas e Hípicas. Conviene un dato propio para cada producto.
 9. **Tipografías:** *Charlie Display* y *Circular Std* (usadas en algunos botones del Figma) no son libres. Si Tinbet tiene licencia web, se pueden agregar; mientras tanto se usa Inter.

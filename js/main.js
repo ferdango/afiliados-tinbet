@@ -2,11 +2,11 @@
   'use strict';
 
   /* ---------------------------------------------------------
-     Configuración: completar con las URLs reales antes de publicar
+     Configuración
      --------------------------------------------------------- */
   var CONFIG = {
-    // URL del login de afiliados (botones "Inicia sesión")
-    loginUrl: '',
+    // Los enlaces de "Iniciar sesión" y "Regístrate" están en el HTML
+    // (data-login-link / data-register-link) para que funcionen sin JS y los lean los buscadores.
     // Endpoint que recibe el formulario (POST JSON). Vacío = envío simulado.
     formEndpoint: '',
     // URL del video testimonial (YouTube embed o .mp4). Vacío = sin video.
@@ -46,17 +46,6 @@
   }
   updateScale();
   window.addEventListener('resize', updateScale);
-
-  /* ---------------------------------------------------------
-     Enlaces configurables
-     --------------------------------------------------------- */
-  if (CONFIG.loginUrl) {
-    document.querySelectorAll('[data-login-link]').forEach(function (a) {
-      a.href = CONFIG.loginUrl;
-      a.target = '_blank';
-      a.rel = 'noopener';
-    });
-  }
 
   /* ---------------------------------------------------------
      Avance automático de los sliders, en bucle infinito
@@ -301,6 +290,7 @@
     movePill();
   }
   window.addEventListener('resize', movePill);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(movePill);
 
   /* ---------------------------------------------------------
      Menú móvil (con foco atrapado y retorno al botón)
@@ -351,174 +341,29 @@
   });
 
   /* ---------------------------------------------------------
-     Panel: tabs con indicador deslizante y descripción, avance automático
-     en bucle, arrastre en desktop y sincronía con el swipe en mobile
+     Panel: una captura con visor ampliado. En desktop se ve completa
+     y legible; en mobile se recorre con el dedo.
      --------------------------------------------------------- */
-  var tabsEl = document.querySelector('.tabs');
-  var tabs = toArray(document.querySelectorAll('.tabs__btn'));
-  var tabPanel = document.getElementById('dash-panel');
-  var screensViewport = document.querySelector('.screens__viewport');
-  var screensTrack = document.querySelector('.screens__track');
-  var slides = toArray(document.querySelectorAll('.screens__slide'));
-  var caption = document.getElementById('dash-caption');
-  var captionTitle = document.querySelector('[data-dash-title]');
-  var captionText = document.querySelector('[data-dash-text]');
-  var nTabs = tabs.length;
-  var activeTab = 0;
-  var currentShift = 0;
-  var loopJump = null;
-
-  function updateCaption(i) {
-    var title = tabs[i].getAttribute('data-title');
-    if (!title || captionTitle.textContent === title) return;
-    captionTitle.textContent = title;
-    captionText.textContent = tabs[i].getAttribute('data-text');
-    restartClass(caption, 'is-changing');
+  var dashScreen = document.querySelector('.dash-frame__screen');
+  if (dashScreen) {
+    dashScreen.addEventListener('click', function () { openZoom(dashScreen); });
   }
 
-  // desvanece los bordes de la tira de pestañas cuando hay más para deslizar
-  function updateTabEdges() {
-    var x = tabsEl.scrollLeft;
-    tabsEl.classList.toggle('has-left', x > 2);
-    tabsEl.classList.toggle('has-right', x + tabsEl.clientWidth < tabsEl.scrollWidth - 2);
-  }
-
-  function moveIndicator() {
-    var t = tabs[activeTab];
-    tabsEl.style.setProperty('--ind-x', t.offsetLeft + 'px');
-    tabsEl.style.setProperty('--ind-w', t.offsetWidth + 'px');
-    tabsEl.classList.add('has-indicator');
-  }
-
-  function revealTab(t, smooth) {
-    // mantiene visible la pestaña activa en la tira desplazable (mobile) sin mover la página
-    if (tabsEl.scrollWidth <= tabsEl.clientWidth) return;
-    var left = t.offsetLeft - (tabsEl.clientWidth - t.offsetWidth) / 2;
-    tabsEl.scrollTo({ left: Math.max(0, left), behavior: smooth && !reduceMotion ? 'smooth' : 'auto' });
-  }
-
-  // Carrusel mobile (scroll) con copias para el bucle; en desktop las mismas copias sirven al riel con transform
-  var dashCar = makeCarousel({
-    scroller: screensViewport,
-    items: slides,
-    appendTo: screensTrack,
-    onSwipe: function (i) { if (isMobile() && i !== activeTab) markTab(i); },
-    onUser: function () { dashAuto.hold(); }
-  });
-  var allSlides = dashCar.all;
-
-  function markTab(i) {
-    tabs.forEach(function (t, k) {
-      var on = k === i;
-      t.classList.toggle('is-active', on);
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      t.tabIndex = on ? 0 : -1;
-    });
-    tabPanel.setAttribute('aria-labelledby', tabs[i].id);
-    allSlides.forEach(function (s, k) { s.classList.toggle('is-active', k % nTabs === i); });
-    activeTab = i;
-    moveIndicator();
-    revealTab(tabs[i], true);
-    updateCaption(i);
-  }
-
-  function showDesktop(pos, smooth) {
-    var offset = allSlides[pos].offsetLeft - allSlides[0].offsetLeft;
-    var maxShift = Math.max(0, screensTrack.scrollWidth - screensViewport.clientWidth);
-    currentShift = Math.min(offset, maxShift);
-    screensTrack.style.transition = smooth && !reduceMotion ? '' : 'none';
-    screensTrack.style.transform = 'translateX(' + -currentShift + 'px)';
-    if (!smooth || reduceMotion) {
-      void screensTrack.offsetWidth;
-      screensTrack.style.transition = '';
-    }
-    clearTimeout(loopJump);
-    if (pos >= nTabs) {
-      // llegó a la copia del primero: salta sin animación al original
-      loopJump = setTimeout(function () { showDesktop(pos - nTabs, false); }, reduceMotion ? 0 : 560);
-    }
-  }
-
-  function showSlide(pos, smooth) {
-    if (isMobile()) {
-      screensTrack.style.transform = '';
-      dashCar.go(pos, smooth);
-    } else {
-      showDesktop(pos, smooth);
-    }
-  }
-
-  // pos permite avanzar hacia la copia del primero (del último al primero sin rebobinar)
-  function selectTab(i, opts) {
-    opts = opts || {};
-    markTab(i);
-    showSlide(opts.pos != null ? opts.pos : i, true);
-    if (opts.focus) tabs[i].focus();
-    if (opts.user) dashAuto.hold();
-    else dashAuto.reset();
-  }
-  function nextTab(opts) {
-    opts = opts || {};
-    opts.pos = activeTab === nTabs - 1 ? nTabs : activeTab + 1;
-    selectTab((activeTab + 1) % nTabs, opts);
-  }
-
-  var dashAuto = createAutoplay({
-    root: document.querySelector('.dashboard'),
-    hoverEls: [tabsEl],
-    duration: 5000,
-    next: function () { nextTab(); },
-    onProgress: function (p) { tabsEl.style.setProperty('--p', p.toFixed(4)); }
-  });
-
-  tabs.forEach(function (tab, i) {
-    tab.addEventListener('click', function () { selectTab(i, { user: true }); });
-    tab.addEventListener('keydown', function (e) {
-      var next = null;
-      if (e.key === 'ArrowRight') next = (i + 1) % nTabs;
-      else if (e.key === 'ArrowLeft') next = (i - 1 + nTabs) % nTabs;
-      else if (e.key === 'Home') next = 0;
-      else if (e.key === 'End') next = nTabs - 1;
-      if (next !== null) { e.preventDefault(); selectTab(next, { focus: true, user: true }); }
-    });
-  });
-
-  tabPanel.classList.add('is-enhanced');
-  allSlides.forEach(function (slide, k) {
-    var i = k % nTabs;
-    var zoomBtn = slide.querySelector('.screens__zoom');
-    // clic en una captura vecina: pasa a esa pestaña; en la activa: la amplía
-    slide.addEventListener('click', function (e) {
-      if (dragMoved || e.target.closest('.screens__zoom')) return;
-      if (i !== activeTab) {
-        if (i === (activeTab + 1) % nTabs) nextTab({ user: true });
-        else selectTab(i, { user: true });
-      } else {
-        openZoom(i, slides[i].querySelector('.screens__zoom'));
-      }
-    });
-    zoomBtn.addEventListener('click', function () { openZoom(i, slides[i].querySelector('.screens__zoom')); });
-  });
-
-  /* Visor de la captura: en desktop se ve completa y legible; en mobile
-     se puede recorrer con el dedo y arranca en la zona de la pestaña */
-  function openZoom(i, opener) {
-    dashAuto.hold();
-    var origin = (slides[i].getAttribute('data-zoom') || '0,0').split(',').map(Number);
+  function openZoom(opener) {
+    var source = opener.querySelector('img');
     var modal = document.createElement('div');
     var scroller = document.createElement('div');
     var img = document.createElement('img');
     var hint = document.createElement('p');
     var closeBtn = document.createElement('button');
-    var heldTimer = setInterval(function () { dashAuto.hold(); }, HOLD_MS - 500);
     modal.className = 'zoom-modal';
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', 'Captura ampliada: ' + tabs[i].getAttribute('data-title'));
+    modal.setAttribute('aria-label', 'Captura ampliada del panel de afiliados');
     scroller.className = 'zoom-modal__scroller';
     scroller.tabIndex = 0;
-    img.src = 'assets/img/dashboard.jpg';
-    img.alt = slides[i].querySelector('img').alt;
+    img.src = source.currentSrc || source.src;
+    img.alt = source.alt;
     img.width = 1600;
     img.height = 775;
     hint.className = 'zoom-modal__hint';
@@ -532,14 +377,7 @@
     modal.appendChild(hint);
     modal.appendChild(closeBtn);
 
-    function place() {
-      var k = img.clientWidth / 1600;
-      scroller.scrollLeft = origin[0] * k;
-      scroller.scrollTop = origin[1] * k;
-    }
     function close() {
-      clearInterval(heldTimer);
-      dashAuto.hold();
       modal.remove();
       document.body.style.overflow = '';
       if (main) main.inert = false;
@@ -560,53 +398,7 @@
     document.body.appendChild(modal);
     document.body.style.overflow = 'hidden';
     if (main) main.inert = true;
-    if (img.complete) place();
-    else img.addEventListener('load', place);
     closeBtn.focus();
-  }
-
-  // Arrastre con el mouse en desktop
-  var drag = null;
-  var dragMoved = false;
-  screensViewport.addEventListener('pointerdown', function (e) {
-    if (isMobile() || e.pointerType !== 'mouse' || e.button !== 0) return;
-    drag = { x: e.clientX };
-    dragMoved = false;
-  });
-  window.addEventListener('pointermove', function (e) {
-    if (!drag) return;
-    var dx = e.clientX - drag.x;
-    if (Math.abs(dx) > 5) {
-      dragMoved = true;
-      tabPanel.classList.add('is-dragging');
-      screensTrack.style.transition = 'none';
-      screensTrack.style.transform = 'translateX(' + (-currentShift + dx * 0.6) + 'px)';
-    }
-  });
-  window.addEventListener('pointerup', function (e) {
-    if (!drag) return;
-    var dx = e.clientX - drag.x;
-    drag = null;
-    tabPanel.classList.remove('is-dragging');
-    screensTrack.style.transition = '';
-    if (dx < -60) nextTab({ user: true });
-    else if (dx > 60) selectTab((activeTab - 1 + nTabs) % nTabs, { user: true });
-    else showSlide(activeTab, true);
-  });
-
-  tabsEl.addEventListener('scroll', updateTabEdges, { passive: true });
-
-  window.addEventListener('resize', function () {
-    moveIndicator();
-    showSlide(activeTab, false);
-    updateTabEdges();
-  });
-  markTab(0);
-  showSlide(0, false);
-  updateTabEdges();
-  dashAuto.reset();
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () { moveIndicator(); movePill(); updateTabEdges(); });
   }
 
   /* ---------------------------------------------------------

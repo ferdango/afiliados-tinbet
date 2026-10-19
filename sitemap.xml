@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://ferdango.github.io/afiliados-tinbet/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <xhtml:link rel="alternate" hreflang="es-PE" href="https://ferdango.github.io/afiliados-tinbet/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ferdango.github.io/afiliados-tinbet/"/>
+    <image:image><image:loc>https://ferdango.github.io/afiliados-tinbet/assets/img/og-image.jpg</image:loc></image:image>
+    <image:image><image:loc>https://ferdango.github.io/afiliados-tinbet/assets/img/hero-hand.png</image:loc></image:image>
+    <image:image><image:loc>https://ferdango.github.io/afiliados-tinbet/assets/img/dashboard.jpg</image:loc></image:image>
+    <image:image><image:loc>https://ferdango.github.io/afiliados-tinbet/assets/img/laptop.png</image:loc></image:image>
+    <image:image><image:loc>https://ferdango.github.io/afiliados-tinbet/assets/img/influencer-sports.jpg</image:loc></image:image>
+  </url>
+</urlset>

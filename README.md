@@ -19,23 +19,45 @@ y entra a <http://localhost:5500>.
 
 ## Configuración
 
-Al inicio de `js/main.js` está el objeto `CONFIG`, que hay que completar antes de publicar:
+Al inicio de `js/main.js` está el objeto `CONFIG`:
 
 | Clave | Uso |
 |---|---|
-| `loginUrl` | URL del login de afiliados (botones "Inicia sesión") |
 | `formEndpoint` | Endpoint que recibe el formulario por `POST` en JSON. Si está vacío, el envío se simula |
 | `testimonialVideo` | URL del video testimonial (embed de YouTube o `.mp4`) |
+
+Los botones **"Iniciar sesión"** (`data-login-link`) y **"Regístrate"** (`data-register-link`) tienen su URL directamente en `index.html`:
+
+- `https://www.tinbet.pe/es/home#login`
+- `https://www.tinbet.pe/es/register`
+
+## SEO
+
+- **URL pública y canónica:** `https://ferdango.github.io/afiliados-tinbet/`. Si la landing pasa a un dominio propio, se reemplaza en `index.html`, `sitemap.xml`, `robots.txt` y `404.html` con:
+
+  ```bash
+  grep -rl "https://ferdango.github.io/afiliados-tinbet/" index.html sitemap.xml robots.txt 404.html | xargs sed -i '' "s#https://ferdango.github.io/afiliados-tinbet/#https://NUEVO-DOMINIO/#g"
+  ```
+
+- **Archivos de SEO:** `sitemap.xml`, `robots.txt`, `site.webmanifest`, `favicon.ico`, `404.html` y `.nojekyll`.
+- **Imagen social:** `assets/img/og-image.jpg` (1200×630).
+- **Después de publicar:**
+  - Enviar el sitemap en Google Search Console.
+  - En una URL de proyecto de GitHub Pages, `robots.txt` no está en la raíz del dominio y Google no lo lee.
 
 ## Estructura
 
 ```
-index.html          Marcado de todas las secciones
+index.html          Marcado de todas las secciones, metadatos SEO y datos estructurados
+sitemap.xml         Mapa del sitio (con imágenes)
+robots.txt          Reglas para buscadores y ubicación del sitemap
+site.webmanifest    Nombre, colores e iconos de la web
+404.html            Página de error propia (noindex)
 css/styles.css      Estilos (desktop 1512 px, ajustes 1024–1511 px y layout móvil < 1024 px)
 css/motion.css      Animaciones: apariciones, títulos por palabra, entrada del hero,
                     gráfico de comisiones, flotaciones y modo de movimiento reducido
-js/main.js          Menú móvil, sliders con avance automático (panel, productos, etapas,
-                    pasos), carruseles, acordeones, botón fijo mobile y formulario
+js/main.js          Menú móvil, visor de la captura del panel, sliders con avance automático
+                    (productos, etapas, pasos), carruseles, acordeones, botón fijo mobile y formulario
 js/motion.js        Títulos por palabra, disparadores al hacer scroll, contadores,
                     parallax y efectos de cursor
 assets/img          Imágenes exportadas de Figma (PNG/JPG + versiones AVIF optimizadas)

@@ -1,0 +1,5 @@
+# Afiliados Tinbet
+User-agent: *
+Allow: /
+
+Sitemap: https://ferdango.github.io/afiliados-tinbet/sitemap.xml

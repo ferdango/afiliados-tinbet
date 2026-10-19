@@ -202,7 +202,7 @@
   var header = document.querySelector('.header');
   var parallaxEls = toArray(document.querySelectorAll('[data-parallax]'));
   var dashboard = document.querySelector('.dashboard');
-  var screens = document.querySelector('.screens');
+  var screens = document.querySelector('.dash-frame');
   var effectsOn = false;
 
   function updateEffects() {
@@ -224,7 +224,7 @@
       if (!desktop) {
         if (effectsOn) screens.style.transform = '';
       } else {
-        var top = dashboard.getBoundingClientRect().top + screens.offsetTop;
+        var top = screens.parentElement.getBoundingClientRect().top;
         var p = clamp((vh - top) / (vh * 0.7), 0, 1);
         var eased = 1 - Math.pow(1 - p, 2);
         screens.style.transform = 'perspective(1600px) rotateX(' + ((1 - eased) * 16).toFixed(2) + 'deg) scale(' + (0.92 + 0.08 * eased).toFixed(4) + ')';
