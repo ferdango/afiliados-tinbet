@@ -38,32 +38,29 @@ Los botones **"Iniciar sesión"** (`data-login-link`) y **"Regístrate"** (`data
 - Los enlaces con `data-chat-open` abren ese chat; si el widget no cargó, siguen su enlace de WhatsApp.
 - En mobile, `css/styles.css` reubica el widget junto al botón fijo de registro. Mientras hay un modal o el menú abiertos, se oculta con la clase `has-overlay`.
 
-## Video testimonial
+## Videos de Testimonios
 
-Las tarjetas de video de **Testimonios** abren un modal con el video que indique su atributo `data-video` en `index.html`:
+Por ahora las tarjetas de **Testimonios** son 6 videos del canal oficial de YouTube **Tinbet Play** (`@tinbetplay`): 3 programas "Datazo" y 3 Shorts. Cada tarjeta abre el video en un modal.
 
-```html
-<button class="testimonial-video" type="button" aria-label="Ver video testimonial" data-video="assets/video/testimonio.mp4">
-```
-
-- **Archivo propio:** subirlo a `assets/video/` en formato `.mp4` (H.264), `.webm` o `.mov`. GitHub no acepta archivos de más de 100 MB; conviene que pese menos de 30 MB.
-- **YouTube:** pegar el enlace tal cual (`youtube.com/watch?v=…`, `youtu.be/…`, `youtube.com/shorts/…`). Se reproduce con `youtube-nocookie.com`.
-- Los videos verticales (de celular o Shorts) se muestran automáticamente en formato 9:16.
-- Mientras no haya video, el modal muestra "Muy pronto podrás ver este testimonio en video".
+- **Cambiar un video:** en `index.html` reemplazar el ID del video en `data-video` y en la URL de la miniatura (`https://i.ytimg.com/vi/ID/...`).
+  - Video normal: `data-video="https://www.youtube.com/watch?v=ID"` y miniatura `hq720.jpg` (tarjeta `vcard--long`).
+  - Short: `data-video="https://www.youtube.com/shorts/ID"` y miniatura `oar2.jpg` (tarjeta `vcard--short`, vertical).
+- **Archivo propio:** `data-video` también acepta un archivo subido a `assets/video/` (`.mp4`, `.webm`, `.mov`, menos de 100 MB por el límite de GitHub).
+- Los videos verticales (Shorts o de celular) se muestran en 9:16 y se reproducen con `youtube-nocookie.com`.
+- Las tarjetas de testimonio con texto (`.testimonial`) siguen en el CSS para cuando haya testimonios reales.
 
 ## SEO
 
-- **URL pública y canónica:** `https://ferdango.github.io/afiliados-tinbet/`. Si la landing pasa a un dominio propio, se reemplaza en `index.html`, `sitemap.xml`, `robots.txt` y `404.html` con:
+- **URL pública y canónica:** `https://afiliadostinbet.pe/` (dominio propio en GitHub Pages mediante el archivo `CNAME`, detrás de Cloudflare). La dirección anterior `ferdango.github.io/afiliados-tinbet/` redirige a ella. Si el dominio cambia, se reemplaza en `index.html`, `sitemap.xml`, `robots.txt` y `404.html` con:
 
   ```bash
-  grep -rl "https://ferdango.github.io/afiliados-tinbet/" index.html sitemap.xml robots.txt 404.html | xargs sed -i '' "s#https://ferdango.github.io/afiliados-tinbet/#https://NUEVO-DOMINIO/#g"
+  grep -rl "https://afiliadostinbet.pe/" index.html sitemap.xml robots.txt 404.html | xargs sed -i '' "s#https://afiliadostinbet.pe/#https://NUEVO-DOMINIO/#g"
   ```
 
 - **Archivos de SEO:** `sitemap.xml`, `robots.txt`, `site.webmanifest`, `favicon.ico`, `404.html` y `.nojekyll`.
 - **Imagen social:** `assets/img/og-image.jpg` (1200×630).
-- **Después de publicar:**
-  - Enviar el sitemap en Google Search Console.
-  - En una URL de proyecto de GitHub Pages, `robots.txt` no está en la raíz del dominio y Google no lo lee.
+- **Después de publicar:** registrar `afiliadostinbet.pe` en Google Search Console y enviar `https://afiliadostinbet.pe/sitemap.xml`.
+- **Cloudflare** antepone su propio bloque al `robots.txt` (Content Signals y bloqueo de bots de entrenamiento de IA); las reglas de este repo quedan al final.
 
 ## Estructura
 

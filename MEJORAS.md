@@ -149,7 +149,7 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
 - El título del formulario pasó de "Regístrate gratis" a **"Únete al programa"**, para no confundirlo con el registro de tinbet.pe.
 
 ### SEO
-- **URL canónica:** `https://ferdango.github.io/afiliados-tinbet/` (GitHub Pages, donde está publicada). Con `hreflang` es-PE y x-default.
+- **URL canónica:** `https://afiliadostinbet.pe/` (dominio propio desde el 19/11; antes `ferdango.github.io/afiliados-tinbet/`, que ahora redirige). Con `hreflang` es-PE y x-default.
 - **Title** de 57 caracteres y **description** de 149, con las palabras clave del programa (afiliados, comisión, apuestas deportivas, casino, Perú).
 - **Meta robots** con `index, follow` y vista previa grande de imágenes.
 - **Open Graph y X (Twitter)** completos, con una **imagen social de 1200×630** (`assets/img/og-image.jpg`).
@@ -180,17 +180,29 @@ La versión fiel al Figma está marcada con el tag [`figma-fiel`](../../tree/fig
   - El video se detiene al cerrar (botón, `Esc` o clic fuera) y el foco vuelve a la tarjeta.
   - Mientras no haya video, el modal muestra un aviso de "muy pronto" sobre la imagen de la tarjeta.
 
+## 10. Footer "Acerca de" y dominio propio
+
+- **Enlaces de "Acerca de"** (se abren en una pestaña nueva):
+  - Grupo Tinbet → `https://grupotinbet.pe/`
+  - Apuestas deportivas → `https://www.tinbet.pe/`
+  - Casino en vivo → `https://www.tinbet.pe/es/games/casino-live`
+  - Virtuales → `https://www.tinbet.pe/es/sports?sportId=234`
+  - Se quitó "Franquicias".
+- **Dominio propio `afiliadostinbet.pe`:** la URL canónica, `hreflang`, Open Graph, X, datos estructurados, `sitemap.xml`, `robots.txt` y la página 404 pasan a usar el dominio nuevo. Antes apuntaban a `ferdango.github.io/afiliados-tinbet/`, que ahora redirige: Google habría tomado como canónica una URL con redirección. Con el dominio en la raíz, `robots.txt` ya lo leen los buscadores.
+
+- **Testimonios con videos oficiales (por ahora):** las 6 tarjetas (5 testimonios de ejemplo con el mismo texto y 1 video sin contenido) pasan a ser 6 videos del canal de YouTube Tinbet Play: 3 programas "Datazo" en tarjetas con miniatura 16:9 y título, y 3 Shorts en tarjetas verticales. Al tocarlas se abre el video en el modal (los Shorts en vertical). Se descartó un Short con imágenes de terceros (Messi y Cristiano) por derechos de imagen. Siguen el carrusel vertical en desktop y el carrusel con puntos en mobile.
+
 ## Pendiente: requiere datos del negocio
 
 Estos puntos no se pueden resolver solo con código y conviene definirlos antes de publicar:
 
 1. **Cifras inconsistentes entre desktop y mobile en el Figma:** 300+ vs 100,000+ afiliados y S/15,000 vs S/30,000 de ingresos potenciales. Se usaron las de desktop.
 2. **Tramos de comisión:** el último salta de "S/ 20,000 a S/ 25,000" a "+ S/ 50,000". Falta definir el rango entre S/ 25,000 y S/ 50,000.
-3. **Testimonios:** son contenido de ejemplo (el mismo texto 5 veces, "CEO de XYZ"). Hay que reemplazarlos por testimonios reales con autorización.
-4. **Video testimonial:** falta el archivo o el enlace de YouTube; se pone en `data-video` de la tarjeta (ver README).
+3. **Testimonios:** por ahora muestran videos del canal Tinbet Play. El título "Afiliados que ya están generando ingresos" habla de afiliados y los videos son del programa "Datazo": conviene ajustar el texto o, más adelante, usar testimonios reales de afiliados con autorización.
+4. **Videos de Testimonios:** son 6 videos fijos de noviembre de 2026; conviene renovarlos cada cierto tiempo (ver README).
 5. **Captura del panel:** se usa una captura con datos de ejemplo. Conviene una captura oficial y actual.
-6. **URLs reales:** endpoint del formulario (`CONFIG.formEndpoint`), Términos y Condiciones y enlaces de "Acerca de". Quedan 6 enlaces con `href="#"`; los buscadores los marcan como enlaces vacíos.
-7. **Dominio propio:** si la landing se mueve a un dominio propio, hay que cambiar la URL canónica (ver README). Además, en GitHub Pages el `robots.txt` solo se lee si está en la raíz del dominio: con la URL actual (`/afiliados-tinbet/`) Google no lo usa, así que el sitemap se debe enviar a mano en Google Search Console.
+6. **URLs reales:** endpoint del formulario (`CONFIG.formEndpoint`) y Términos y Condiciones. Queda 1 enlace con `href="#"` (Términos y Condiciones).
+7. **Google Search Console:** registrar `afiliadostinbet.pe` y enviar `https://afiliadostinbet.pe/sitemap.xml`.
 8. **Etiqueta "150+ proveedores. 10,400+ juegos y tragamonedas"** repetida en los 4 productos, incluso en Apuestas deportivas e Hípicas. Conviene un dato propio para cada producto.
 9. **Tipografías:** *Charlie Display* y *Circular Std* (usadas en algunos botones del Figma) no son libres. Si Tinbet tiene licencia web, se pueden agregar; mientras tanto se usa Inter.
 10. **Canal de WhatsApp en Bitrix24:** el widget está integrado, pero hoy solo tiene el chat en línea. Para que ofrezca WhatsApp hay que activar ese canal en Bitrix24 (CRM › Widget del sitio); no requiere cambios en la landing. El número de respaldo `+51 987 665 213` viene del diseño y conviene confirmarlo.

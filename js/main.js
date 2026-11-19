@@ -789,7 +789,7 @@
             c.getAttribute('data-video') === card.getAttribute('data-video');
         })[0] || card
       : card;
-    openVideo(card.getAttribute('data-video'), opener, card.querySelector('.testimonial-video__img'));
+    openVideo(card.getAttribute('data-video'), opener, card.querySelector('.vcard__thumb, .testimonial-video__img'));
   });
 
   function openVideo(url, opener, poster) {
@@ -800,7 +800,7 @@
     modal.className = 'video-modal';
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', 'Video testimonial');
+    modal.setAttribute('aria-label', opener.getAttribute('aria-label') || 'Video');
     frame.className = 'video-modal__frame';
     closeBtn.className = 'video-modal__close';
     closeBtn.type = 'button';
@@ -811,7 +811,7 @@
     if (video && video.type === 'youtube') {
       media = document.createElement('iframe');
       media.src = video.src;
-      media.title = 'Video testimonial';
+      media.title = (opener.getAttribute('aria-label') || 'Video').replace(/^Ver video: /, '');
       media.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
       media.allowFullscreen = true;
       if (video.vertical) frame.classList.add('is-vertical');

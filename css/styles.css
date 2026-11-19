@@ -735,12 +735,48 @@ ul, ol { list-style: none; }
 .testimonial__person span { font: 400 13px/normal var(--font-body); color: rgba(246, 197, 43, 0.76); }
 .testimonial__quote { width: 28px; height: 28px; }
 
-.testimonial-video { position: relative; width: 342px; height: 430px; border-radius: 24px; overflow: hidden; background: #d9d9d9; }
-.testimonial-video__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.testimonial-video__img { transition: scale 0.8s var(--ease-out); }
-.testimonial-video:hover .testimonial-video__img { scale: 1.05; }
-.testimonial-video__play { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; border-radius: 50%; transform: translate(-50%, -50%); transition: transform 0.2s ease; }
+/* Tarjetas de video (canal oficial Tinbet Play). Las de texto de arriba quedan
+   para cuando haya testimonios reales. */
+.testimonial-video {
+  position: relative; display: flex; flex-direction: column; width: 342px; padding: 0; overflow: hidden; isolation: isolate;
+  border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.08); background: var(--card); color: #fff; text-align: left;
+  transition: border-color 0.3s ease, translate 0.4s var(--ease-out);
+}
+.testimonial-video:hover { border-color: rgba(152, 223, 75, 0.4); }
+.vcard__thumb { width: 100%; height: 100%; object-fit: cover; transition: scale 0.8s var(--ease-out); }
+.testimonial-video:hover .vcard__thumb { scale: 1.05; }
+.testimonial-video__play {
+  position: absolute; left: 50%; top: 50%; z-index: 2; width: 64px; height: 64px; border-radius: 50%;
+  transform: translate(-50%, -50%); transition: transform 0.2s ease;
+}
 .testimonial-video:hover .testimonial-video__play { transform: translate(-50%, -50%) scale(1.1); }
+.vcard__channel { display: flex; align-items: center; gap: 8px; font: 600 13px/18px var(--font-body); color: var(--text-soft); }
+.vcard__channel img { width: 22px; height: 22px; border-radius: 6px; }
+.vcard__title {
+  font: 700 15px/21px var(--font-head); color: #fff;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* Short: miniatura vertical a toda la tarjeta, texto encima */
+.vcard--short { height: 456px; }
+.vcard--short .vcard__thumb { position: absolute; inset: 0; z-index: -1; }
+.vcard--short::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(6, 7, 6, 0.35) 0%, transparent 26%, transparent 40%, rgba(6, 7, 6, 0.82) 64%, rgba(6, 7, 6, 0.96) 100%);
+}
+.vcard__badge {
+  position: absolute; left: 16px; top: 16px; padding: 4px 10px; border-radius: 840px;
+  background: rgba(6, 7, 6, 0.7); font: 700 11px/16px var(--font-body); letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
+}
+.vcard__badge::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: #ff3d3d; vertical-align: 1px; }
+.vcard__info { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 10px; padding: 20px; }
+
+/* Video: miniatura 16:9 arriba y datos abajo */
+.vcard__media { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; }
+.vcard__body { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px 22px; }
+.vcard__cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; font: 600 14px/20px var(--font-body); color: var(--lime); }
+.vcard__cta::after { content: "→"; transition: translate 0.3s var(--ease-out); }
+.testimonial-video:hover .vcard__cta::after { translate: 4px 0; }
 
 /* =========================================================
    CONTACTO
@@ -1193,13 +1229,16 @@ ul, ol { list-style: none; }
   .testimonials__track { display: contents; }
   .testimonials__grid [data-clone] { display: none; }
   .testimonials__track > .testimonial[data-loop-clone] { display: flex; }
-  .testimonials__track > .testimonial-video[data-loop-clone] { display: block; }
+  .testimonials__track > .testimonial-video[data-loop-clone] { display: flex; }
   .testimonials__grid { width: 100%; gap: 16px; padding: 0 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 12px; scrollbar-width: none; }
   .testimonials__grid::-webkit-scrollbar { display: none; }
   .testimonials__col { display: contents; }
   .testimonial,
   .testimonial-video { flex: 0 0 300px; width: 300px; height: auto; scroll-snap-align: start; }
-  .testimonial-video { min-height: 340px; }
+  /* en el carrusel mobile todas las tarjetas miden lo mismo */
+  .testimonial-video { height: 400px; }
+  .vcard--long .vcard__body { flex: 1; }
+  .vcard--long .vcard__cta { margin-top: auto; }
   .testimonial__text {
     flex: none; line-height: 20px; overflow: hidden;
     display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical;

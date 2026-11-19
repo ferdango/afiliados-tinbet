@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ferdango.github.io/afiliados-tinbet/sitemap.xml
+Sitemap: https://afiliadostinbet.pe/sitemap.xml
